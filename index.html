@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Práticas Integradoras 1 2025.2</title>
+  <style>
+    :root { 
+      --bg: #0e0f13; 
+      --card: #151823; 
+      --card-hover: #1a1d2a;
+      --txt: #e9ecf1; 
+      --muted: #9aa3b2; 
+      --accent: #7c5cff; 
+      --accent-hover: #8b6bff;
+      --success: #2fd180; 
+      --error: #ff5c7a; 
+      --warning: #ffa726;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --gradient: linear-gradient(135deg, var(--accent), #4c82ff);
+    }
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, Arial, sans-serif; 
+      background: linear-gradient(120deg, #0e0f13, #12131a 40%, #101628); 
+      color: var(--txt); 
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 24px;
+      line-height: 1.6;
+    }
+    .card { 
+      width: 100%; 
+      max-width: 720px; 
+      background: var(--card); 
+      border: 1px solid rgba(255,255,255,.06); 
+      border-radius: 20px; 
+      box-shadow: 0 10px 30px var(--shadow); 
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px var(--shadow); }
+    header { 
+      padding: 32px 32px 20px; 
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.05), rgba(76, 130, 255, 0.05));
+      text-align: center;
+    }
+    h1 { 
+      margin: 0 0 8px; 
+      font-size: 1.6rem; 
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    p.sub { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.5; }
+    form { padding: 28px 32px 32px; display: grid; gap: 24px; }
+    label { display: block; font-weight: 600; margin: 0 0 8px; color: var(--txt); font-size: 0.95rem; }
+    .field { display: grid; gap: 8px; }
+    input, select, button { 
+      width: 100%; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); 
+      background: #0f1220; color: var(--txt); font-size: 15px; transition: all 0.3s ease; outline: none;
+    }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.1); background: #111426; }
+    input::placeholder { color: #7d8597; }
+    .hint { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+    .row { display: grid; gap: 20px; grid-template-columns: 1fr; }
+    @media (min-width: 720px) { .row { grid-template-columns: 1fr 1fr; } }
+    .chips-container {
+      background: rgba(15, 18, 32, 0.5);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 8px 0;
+    }
+    .chips-title {
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { 
+      display: inline-flex; gap: 8px; align-items: center; font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; 
+      background: #0f1220; border: 1px solid rgba(255,255,255,.08); color: var(--muted);
+      transition: all 0.3s ease;
+    }
+    .pill.soldout { opacity: .5; text-decoration: line-through; }
+    .pill:hover { background: #141a2a; border-color: rgba(124, 92, 255, 0.3); transform: translateY(-1px); }
+    .status { 
+      padding: 16px 20px; border-radius: 12px; background: #0f1a1f; border: 1px solid rgba(255,255,255,.08); 
+      font-size: 0.95rem; display: none; margin: 16px 0; transition: all 0.3s ease;
+    }
+    .status.success { display: block; border-color: rgba(47,209,128,.5); background: rgba(47,209,128,.1); color: var(--success); }
+    .status.error { display: block; border-color: rgba(255,92,122,.5); background: rgba(255,92,122,.1); color: var(--error); }
+    .footer { 
+      padding: 20px 32px 28px; display: flex; justify-content: space-between; align-items: center; 
+      color: var(--muted); border-top: 1px solid rgba(255,255,255,.06); font-size: 0.9rem; flex-wrap: wrap; gap: 12px;
+      background: rgba(15, 18, 32, 0.3);
+    }
+    button { 
+      background: var(--gradient); border: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124, 92, 255, 0.3); }
+    button:active { transform: translateY(0); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    button::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s;
+    }
+    button:hover::before { left: 100%; }
+    .sync-indicator { display: inline-flex; align-items: center; gap: 6px; }
+    .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%{opacity:1;} 50%{opacity:.5;} 100%{opacity:1;} }
+    .loading-spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-radius:50%; border-top-color:#fff; animation: spin 1s ease-in-out infinite; margin-right:8px;}
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 768px) {
+      body { padding: 16px; } .card { border-radius: 16px; }
+      header { padding: 24px 20px 16px; } h1 { font-size: 1.4rem; }
+      form { padding: 20px; gap: 20px; } input, select, button { padding: 14px; }
+      .footer { padding: 16px 20px 20px; flex-direction: column; text-align: center; gap: 8px; }
+      .chips { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>🎓 Práticas Integradoras 1 2025.2</h1>
+      <p class="sub">Preencha o formulário abaixo para garantir sua vaga.<br>
+      <strong>Cada prática tem limite de 32 vagas</strong> — não perca tempo!</p>
+    </header>
+
+    <form id="form">
+      <div class="field">
+        <label for="nome">👤 Nome Completo</label>
+        <input id="nome" name="nome" type="text" placeholder="Digite seu nome completo" required />
+        <div class="hint">Informe seu nome completo conforme documentos oficiais</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="serie">🏫 Série/Turma</label>
+          <select id="serie" name="serie" required>
+            <option value="" disabled selected>Selecione sua turma</option>
+            <option>1° A</option><option>1° B</option><option>1° C</option><option>1° D</option><option>1° E</option>
+            <option>2° A</option><option>2° B</option><option>2° C</option>
+            <option>3° A</option><option>3° B</option>
+          </select>
+          <div class="hint">Escolha sua série e turma atual</div>
+        </div>
+
+        <div class="field">
+          <label for="pratica">📚 Prática Integradora</label>
+          <select id="pratica" name="pratica" required>
+            <option value="" disabled selected>Carregando opções...</option>
+          </select>
+          <div class="hint">Práticas esgotadas ficam indisponíveis</div>
+        </div>
+      </div>
+
+      <div class="chips-container">
+        <div class="chips-title">📊 Vagas Disponíveis</div>
+        <div class="chips" id="chips"></div>
+      </div>
+      
+      <div id="status" class="status"></div>
+      <button id="btn" type="submit">✨ Confirmar Inscrição</button>
+    </form>
+
+    <div class="footer">
+      <span>🚀 ECI Maria Zeca de Souza • Lkton</span>
+      <div class="sync-indicator">
+        <div class="sync-dot"></div>
+        <span id="lastSync">Sincronizando...</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ================== API autodetect ================== */
+    const DEFAULT_API = "https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp/exec";
+    function getQueryParam(name){ const u=new URL(location.href); const v=u.searchParams.get(name); return v&&v.trim()?v.trim():null; }
+    async function resolveApi(){
+      const qp=getQueryParam('api'); if(qp) return qp;
+      const ls=localStorage.getItem('pi_api'); if(ls) return ls;
+      try{ const r=await fetch('config.json',{cache:'no-store'}); if(r.ok){ const cfg=await r.json(); if(cfg&&cfg.api) return String(cfg.api);} }catch(_){}
+      return DEFAULT_API;
+    }
+
+    /* ================== Constantes de regra ================== */
+    const BLOQUEADA_1_ANO = 'Estratégias para fomentar a escrita autoral no contexto da redação do ENEM: uma abordagem desconstrutiva dos modelos padronizados';
+    function isPrimeiroAno(serie){ return /^1[°º]\s[ABCDE]$/i.test(String(serie||'').trim()); }
+
+    /* ================== DOM ================== */
+    const $ = (s) => document.querySelector(s);
+    const form = $("#form"), selPra = $("#pratica"), chips = $("#chips"), box = $("#status"), btn = $("#btn"), last = $("#lastSync");
+    const inpNome = $("#nome"), inpSerie = $("#serie");
+
+    /* ================== Estado ================== */
+    let API_URL = DEFAULT_API;
+    let availabilityCache = []; // último GET / disponibilidade
+
+    /* ================== Render helpers ================== */
+    function currentSerie(){ return inpSerie.value; }
+
+    function filteredBySerie(items){
+      const serie = currentSerie();
+      if (isPrimeiroAno(serie)) {
+        return items.filter(it => it.pratica !== BLOQUEADA_1_ANO);
+      }
+      return items;
+    }
+
+    function renderOptions(items){
+      const data = filteredBySerie(items);
+      // mantém seleção se ainda válida
+      const prev = selPra.value;
+      selPra.innerHTML = '';
+      const opt0 = document.createElement('option');
+      opt0.value = ''; opt0.disabled = true; opt0.selected = true;
+      opt0.textContent = 'Selecione uma prática';
+      selPra.appendChild(opt0);
+
+      data.forEach(it => {
+        const rem = +it.restantes || 0;
+        const o = document.createElement("option");
+        o.value = it.pratica;
+        o.textContent = `${it.pratica} ${rem > 0 ? `(${rem} vagas)` : '(ESGOTADO)'}`;
+        if (rem <= 0) o.disabled = true;
+        selPra.appendChild(o);
+      });
+
+      // restaura seleção se possível
+      if (prev && Array.from(selPra.options).some(o => o.value === prev && !o.disabled)) {
+        selPra.value = prev;
+      }
+    }
+
+    function renderChips(items){
+      const data = filteredBySerie(items);
+      chips.innerHTML = "";
+      const frag = document.createDocumentFragment();
+
+      data.forEach(it => {
+        const r = +it.restantes || 0;
+        const pill = document.createElement('span');
+        pill.className = 'pill' + (r === 0 ? ' soldout' : '');
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = it.pratica.length > 40 ? it.pratica.substring(0, 40) + '…' : it.pratica;
+        const strong = document.createElement('strong');
+        strong.textContent = `${r} ${r === 1 ? 'vaga' : 'vagas'}`;
+        pill.appendChild(nameSpan);
+        pill.appendChild(strong);
+        frag.appendChild(pill);
+      });
+
+      chips.appendChild(frag);
+    }
+
+    function setStatus(msg, type){ 
+      box.textContent = msg; 
+      box.className = 'status ' + (type || ''); 
+      box.style.display = 'block'; 
+    }
+    function clearStatus(){ box.style.display = 'none'; box.textContent=''; box.className='status'; }
+
+    /* ================== Data ================== */
+    async function loadAvailability(){
+      try{
+        btn.disabled = true; 
+        clearStatus();
+        const res = await fetch(API_URL); 
+        const json = await res.json();
+        const items = (json && json.availability) || []; 
+        availabilityCache = items;
+        renderOptions(items); 
+        renderChips(items); 
+        last.textContent = "Atualizado " + new Date().toLocaleTimeString('pt-BR');
+      }catch(e){
+        setStatus("⚠️ Não foi possível carregar a disponibilidade. Tente novamente.", "error");
+        last.textContent = "Erro na sincronização";
+      }finally{
+        btn.disabled = false;
+      }
+    }
+
+    /* ================== Eventos ================== */
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); 
+      clearStatus();
+
+      const nome = (inpNome.value || '').trim();
+      const serie = currentSerie();
+      const pratica = selPra.value;
+
+      if (!nome || !serie || !pratica) { 
+        setStatus("⚠️ Por favor, preencha todos os campos obrigatórios.", "error"); 
+        return; 
+      }
+      // UX guard: bloqueio 1º ano (servidor também valida)
+      if (isPrimeiroAno(serie) && pratica === BLOQUEADA_1_ANO) {
+        setStatus("Esta prática não está disponível para o 1º ano. Escolha outra opção.", "error");
+        return;
+      }
+
+      btn.disabled = true; 
+      btn.innerHTML = '<span class="loading-spinner"></span>Enviando inscrição...';
+
+      try{
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {"Content-Type": "text/plain;charset=utf-8"},
+          body: JSON.stringify({nome, serie, pratica})
+        });
+        const json = await res.json();
+
+        if (json.ok) { 
+          setStatus("🎉 Inscrição registrada com sucesso! Sua vaga está garantida.", "success");
+          form.reset(); 
+          await loadAvailability();
+          box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (json.full) {
+          setStatus("😔 Essa prática esgotou as vagas. Escolha outra opção disponível.", "error");
+          await loadAvailability();
+        } else {
+          setStatus("❌ Erro: " + (json.error || "não foi possível concluir a inscrição."), "error");
+        }
+      }catch(err){
+        setStatus("🔌 Falha na conexão. Verifique sua internet e tente novamente.", "error");
+      }finally{
+        btn.disabled = false; 
+        btn.innerHTML = "✨ Confirmar Inscrição"; 
+      }
+    });
+
+    // Atualiza opções quando a série muda
+    inpSerie.addEventListener('change', () => {
+      const prevPra = selPra.value;
+      renderOptions(availabilityCache);
+      renderChips(availabilityCache);
+      // se a prática escolhida ficou inválida, limpa
+      if (!Array.from(selPra.options).some(o => o.value === prevPra && !o.disabled)) {
+        selPra.value = "";
+      }
+    });
+
+    // Validação visual do nome
+    inpNome.addEventListener('input', function() {
+      if (this.value.trim().length < 3) {
+        this.style.borderColor = 'rgba(255, 92, 122, 0.5)';
+      } else {
+        this.style.borderColor = 'rgba(47, 209, 128, 0.5)';
+      }
+    });
+
+    // Efeito pill hover (gracinha)
+    document.addEventListener('DOMContentLoaded', function() {
+      const style = document.createElement('style');
+      style.textContent = `.pill:hover{ transform: translateY(-2px) scale(1.02); box-shadow: 0 4px 12px rgba(124,92,255,0.2); }`;
+      document.head.appendChild(style);
+    });
+
+    /* ================== Boot ================== */
+    (async function init(){
+      API_URL = await resolveApi();
+      await loadAvailability(); 
+      setInterval(loadAvailability, 60000);
+    })();
+  </script>
+</body>
+</html>
