@@ -129,7 +129,7 @@
     <header>
       <h1>🎓 Práticas Integradoras 1 2025.2</h1>
       <p class="sub">Preencha o formulário abaixo para garantir sua vaga.<br>
-      <strong>Cada prática tem limite de 32 vagas</strong> — não perca tempo!</p>
+      <strong>Cada prática tem limite de vagas</strong> - não perca tempo!</p>
     </header>
 
     <form id="form">
@@ -308,54 +308,33 @@
       btn.disabled = true; 
       btn.innerHTML = '<span class="loading-spinner"></span>Enviando inscrição...';
 
-      form.addEventListener("submit", async (e) => {
-  e.preventDefault(); 
-  clearStatus();
+      try{
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {"Content-Type": "text/plain;charset=utf-8"},
+          body: JSON.stringify({nome, serie, pratica})
+        });
+        const json = await res.json();
 
-  const nome = (inpNome.value || '').trim();
-  const serie = currentSerie();
-  const pratica = selPra.value;
-
-  if (!nome || !serie || !pratica) { 
-    setStatus("⚠️ Por favor, preencha todos os campos obrigatórios.", "error"); 
-    return; 
-  }
-
-  // UX guard: bloqueio 1º ano (servidor também valida)
-  if (isPrimeiroAno(serie) && pratica === BLOQUEADA_1_ANO) {
-    setStatus("Esta prática não está disponível para o 1º ano. Escolha outra opção.", "error");
-    return;
-  }
-
-  btn.disabled = true; 
-  btn.innerHTML = '<span class="loading-spinner"></span>Enviando inscrição...';
-
-  try{
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"},
-      body: JSON.stringify({nome, serie, pratica})
+        if (json.ok) { 
+          setStatus("🎉 Inscrição registrada com sucesso! Sua vaga está garantida.", "success");
+          form.reset(); 
+          await loadAvailability();
+          box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (json.full) {
+          setStatus("😔 Essa prática esgotou as vagas. Escolha outra opção disponível.", "error");
+          await loadAvailability();
+        } else {
+          setStatus("❌ Erro: " + (json.error || "não foi possível concluir a inscrição."), "error");
+        }
+      }catch(err){
+        setStatus("🔌 Falha na conexão. Verifique sua internet e tente novamente.", "error");
+      }finally{
+        btn.disabled = false; 
+        btn.innerHTML = "✨ Confirmar Inscrição"; 
+      }
     });
-    const json = await res.json();
 
-    if (json.ok) { 
-      setStatus("🎉 Inscrição realizada com sucesso!", "success");
-      form.reset(); 
-      await loadAvailability();
-      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else if (json.full) {
-      setStatus("😔 Essa prática esgotou as vagas. Escolha outra opção disponível.", "error");
-      await loadAvailability();
-    } else {
-      setStatus("❌ Erro: " + (json.error || "não foi possível concluir a inscrição."), "error");
-    }
-  } catch(err) {
-    setStatus("🔌 Falha na conexão. Verifique sua internet e tente novamente.", "error");
-  } finally {
-    btn.disabled = false; 
-    btn.innerHTML = "✨ Confirmar Inscrição"; 
-  }
-});
     // Atualiza opções quando a série muda
     inpSerie.addEventListener('change', () => {
       const prevPra = selPra.value;
