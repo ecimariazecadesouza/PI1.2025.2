@@ -127,7 +127,7 @@
 <body>
   <div class="card">
     <header>
-      <h1>📚 Práticas Integradoras 1 2025.2</h1>
+      <h1>🎓 Práticas Integradoras 1 2025.2</h1>
       <p class="sub">Preencha o formulário abaixo para garantir sua vaga.<br>
       <strong>Cada prática tem limite de 32 vagas</strong> — não perca tempo!</p>
     </header>
@@ -179,16 +179,114 @@
   </div>
 
   <script>
-    // Função para exibir mensagens
+    /* ================== API autodetect ================== */
+    const DEFAULT_API = "https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp/exec";
+    function getQueryParam(name){ const u=new URL(location.href); const v=u.searchParams.get(name); return v&&v.trim()?v.trim():null; }
+    async function resolveApi(){
+      const qp=getQueryParam('api'); if(qp) return qp;
+      const ls=localStorage.getItem('pi_api'); if(ls) return ls;
+      try{ const r=await fetch('config.json',{cache:'no-store'}); if(r.ok){ const cfg=await r.json(); if(cfg&&cfg.api) return String(cfg.api);} }catch(_){}
+      return DEFAULT_API;
+    }
+
+    /* ================== Constantes de regra ================== */
+    const BLOQUEADA_1_ANO = 'Estratégias para fomentar a escrita autoral no contexto da redação do ENEM: uma abordagem desconstrutiva dos modelos padronizados';
+    function isPrimeiroAno(serie){ return /^1[°º]\s[ABCDE]$/i.test(String(serie||'').trim()); }
+
+    /* ================== DOM ================== */
+    const $ = (s) => document.querySelector(s);
+    const form = $("#form"), selPra = $("#pratica"), chips = $("#chips"), box = $("#status"), btn = $("#btn"), last = $("#lastSync");
+    const inpNome = $("#nome"), inpSerie = $("#serie");
+
+    /* ================== Estado ================== */
+    let API_URL = DEFAULT_API;
+    let availabilityCache = []; // último GET / disponibilidade
+
+    /* ================== Render helpers ================== */
+    function currentSerie(){ return inpSerie.value; }
+
+    function filteredBySerie(items){
+      const serie = currentSerie();
+      if (isPrimeiroAno(serie)) {
+        return items.filter(it => it.pratica !== BLOQUEADA_1_ANO);
+      }
+      return items;
+    }
+
+    function renderOptions(items){
+      const data = filteredBySerie(items);
+      // mantém seleção se ainda válida
+      const prev = selPra.value;
+      selPra.innerHTML = '';
+      const opt0 = document.createElement('option');
+      opt0.value = ''; opt0.disabled = true; opt0.selected = true;
+      opt0.textContent = 'Selecione uma prática';
+      selPra.appendChild(opt0);
+
+      data.forEach(it => {
+        const rem = +it.restantes || 0;
+        const o = document.createElement("option");
+        o.value = it.pratica;
+        o.textContent = `${it.pratica} ${rem > 0 ? `(${rem} vagas)` : '(ESGOTADO)'}`;
+        if (rem <= 0) o.disabled = true;
+        selPra.appendChild(o);
+      });
+
+      // restaura seleção se possível
+      if (prev && Array.from(selPra.options).some(o => o.value === prev && !o.disabled)) {
+        selPra.value = prev;
+      }
+    }
+
+    function renderChips(items){
+      const data = filteredBySerie(items);
+      chips.innerHTML = "";
+      const frag = document.createDocumentFragment();
+
+      data.forEach(it => {
+        const r = +it.restantes || 0;
+        const pill = document.createElement('span');
+        pill.className = 'pill' + (r === 0 ? ' soldout' : '');
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = it.pratica.length > 40 ? it.pratica.substring(0, 40) + '…' : it.pratica;
+        const strong = document.createElement('strong');
+        strong.textContent = `${r} ${r === 1 ? 'vaga' : 'vagas'}`;
+        pill.appendChild(nameSpan);
+        pill.appendChild(strong);
+        frag.appendChild(pill);
+      });
+
+      chips.appendChild(frag);
+    }
+
     function setStatus(msg, type){ 
       box.textContent = msg; 
       box.className = 'status ' + (type || ''); 
       box.style.display = 'block'; 
     }
-
     function clearStatus(){ box.style.display = 'none'; box.textContent=''; box.className='status'; }
 
-    // Lógica do envio de formulário
+    /* ================== Data ================== */
+    async function loadAvailability(){
+      try{
+        btn.disabled = true; 
+        clearStatus();
+        const res = await fetch(API_URL); 
+        const json = await res.json();
+        const items = (json && json.availability) || []; 
+        availabilityCache = items;
+        renderOptions(items); 
+        renderChips(items); 
+        last.textContent = "Atualizado " + new Date().toLocaleTimeString('pt-BR');
+      }catch(e){
+        setStatus("⚠️ Não foi possível carregar a disponibilidade. Tente novamente.", "error");
+        last.textContent = "Erro na sincronização";
+      }finally{
+        btn.disabled = false;
+      }
+    }
+
+    /* ================== Eventos ================== */
     form.addEventListener("submit", async (e) => {
       e.preventDefault(); 
       clearStatus();
@@ -201,36 +299,96 @@
         setStatus("⚠️ Por favor, preencha todos os campos obrigatórios.", "error"); 
         return; 
       }
+      // UX guard: bloqueio 1º ano (servidor também valida)
+      if (isPrimeiroAno(serie) && pratica === BLOQUEADA_1_ANO) {
+        setStatus("Esta prática não está disponível para o 1º ano. Escolha outra opção.", "error");
+        return;
+      }
 
       btn.disabled = true; 
       btn.innerHTML = '<span class="loading-spinner"></span>Enviando inscrição...';
 
-      try{
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {"Content-Type": "text/plain;charset=utf-8"},
-          body: JSON.stringify({nome, serie, pratica})
-        });
-        const json = await res.json();
+      form.addEventListener("submit", async (e) => {
+  e.preventDefault(); 
+  clearStatus();
 
-        if (json.ok) { 
-          setStatus("🎉 Inscrição realizada com sucesso!", "success");
-          form.reset(); 
-          await loadAvailability();
-          box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else if (json.full) {
-          setStatus("😔 Essa prática esgotou as vagas. Escolha outra opção disponível.", "error");
-          await loadAvailability();
-        } else {
-          setStatus("❌ Erro: " + (json.error || "não foi possível concluir a inscrição."), "error");
-        }
-      } catch(err) {
-        setStatus("🔌 Falha na conexão. Verifique sua internet e tente novamente.", "error");
-      } finally {
-        btn.disabled = false; 
-        btn.innerHTML = "✨ Confirmar Inscrição"; 
+  const nome = (inpNome.value || '').trim();
+  const serie = currentSerie();
+  const pratica = selPra.value;
+
+  if (!nome || !serie || !pratica) { 
+    setStatus("⚠️ Por favor, preencha todos os campos obrigatórios.", "error"); 
+    return; 
+  }
+
+  // UX guard: bloqueio 1º ano (servidor também valida)
+  if (isPrimeiroAno(serie) && pratica === BLOQUEADA_1_ANO) {
+    setStatus("Esta prática não está disponível para o 1º ano. Escolha outra opção.", "error");
+    return;
+  }
+
+  btn.disabled = true; 
+  btn.innerHTML = '<span class="loading-spinner"></span>Enviando inscrição...';
+
+  try{
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify({nome, serie, pratica})
+    });
+    const json = await res.json();
+
+    if (json.ok) { 
+      setStatus("🎉 Inscrição realizada com sucesso!", "success");
+      form.reset(); 
+      await loadAvailability();
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (json.full) {
+      setStatus("😔 Essa prática esgotou as vagas. Escolha outra opção disponível.", "error");
+      await loadAvailability();
+    } else {
+      setStatus("❌ Erro: " + (json.error || "não foi possível concluir a inscrição."), "error");
+    }
+  } catch(err) {
+    setStatus("🔌 Falha na conexão. Verifique sua internet e tente novamente.", "error");
+  } finally {
+    btn.disabled = false; 
+    btn.innerHTML = "✨ Confirmar Inscrição"; 
+  }
+});
+    // Atualiza opções quando a série muda
+    inpSerie.addEventListener('change', () => {
+      const prevPra = selPra.value;
+      renderOptions(availabilityCache);
+      renderChips(availabilityCache);
+      // se a prática escolhida ficou inválida, limpa
+      if (!Array.from(selPra.options).some(o => o.value === prevPra && !o.disabled)) {
+        selPra.value = "";
       }
     });
+
+    // Validação visual do nome
+    inpNome.addEventListener('input', function() {
+      if (this.value.trim().length < 3) {
+        this.style.borderColor = 'rgba(255, 92, 122, 0.5)';
+      } else {
+        this.style.borderColor = 'rgba(47, 209, 128, 0.5)';
+      }
+    });
+
+    // Efeito pill hover (gracinha)
+    document.addEventListener('DOMContentLoaded', function() {
+      const style = document.createElement('style');
+      style.textContent = `.pill:hover{ transform: translateY(-2px) scale(1.02); box-shadow: 0 4px 12px rgba(124,92,255,0.2); }`;
+      document.head.appendChild(style);
+    });
+
+    /* ================== Boot ================== */
+    (async function init(){
+      API_URL = await resolveApi();
+      await loadAvailability(); 
+      setInterval(loadAvailability, 60000);
+    })();
   </script>
 </body>
 </html>
