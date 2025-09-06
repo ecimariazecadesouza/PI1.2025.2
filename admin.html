@@ -724,7 +724,7 @@
         <div class="stat-value" id="tot">-</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label"><span class="icon-wrapper">📚</span> Aprofundamentos Ativos</div>
+        <div class="stat-label"><span class="icon-wrapper">📚</span> PI 1 Ativas</div>
         <div class="stat-value" id="active">-</div>
       </div>
       <div class="stat-card">
@@ -746,7 +746,7 @@
       <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;"><span class="icon-wrapper">🔍</span> Filtros e Busca</h3>
       <div class="grid grid-2">
         <div class="form-group">
-          <label for="fPratica"><span class="icon-wrapper">📚</span> Aprofundamento</label>
+          <label for="fPratica"><span class="icon-wrapper">📚</span> Práticas Integradoras 1</label>
           <select id="fPratica">
             <option value="">Todos</option>
           </select>
@@ -796,7 +796,7 @@
               <th data-sort="ts"><span class="icon-wrapper">🕒</span> Data/Hora <span class="sort-icon">↕️</span></th>
               <th data-sort="nome"><span class="icon-wrapper">👤</span> Nome <span class="sort-icon">↕️</span></th>
               <th data-sort="serie"><span class="icon-wrapper">🏫</span> Série/Turma <span class="sort-icon">↕️</span></th>
-              <th data-sort="pratica"><span class="icon-wrapper">📚</span> Aprofundamento <span class="sort-icon">↕️</span></th>
+              <th data-sort="pratica"><span class="icon-wrapper">📚</span> Práticas Integradoras 1 <span class="sort-icon">↕️</span></th>
               <th><span class="icon-wrapper">🆔</span> ID</th>
             </tr>
           </thead>
@@ -1243,14 +1243,14 @@ function exportToPDF() {
   // Adicionar informações de filtro
   let filterInfo = 'Filtros aplicados: ';
   const filters = [];
-  if (fPratica.value) filters.push(`Aprofundamento: ${fPratica.value}`);
+  if (fPratica.value) filters.push(`Práticas Integradoras 1: ${fPratica.value}`);
   if (fSerie.value) filters.push(`Série/Turma: ${fSerie.value}`);
   if (fQ.value) filters.push(`Nome: ${fQ.value}`);
   
   filterInfo += filters.length > 0 ? filters.join(', ') : 'Nenhum';
   doc.text(filterInfo, 14, 40);
 
-  const headers = [['Data/Hora','Nome','Série/Turma','Aprofundamento','ID']];
+  const headers = [['Data/Hora','Nome','Série/Turma','Práticas Integradoras 1','ID']];
   const data = currentData.map(row => [ fmtDate(row.ts), row.nome, row.serie, row.pratica, row.id ]);
 
   doc.autoTable({
@@ -1268,7 +1268,7 @@ function exportToPDF() {
 
 function exportToXLSX() {
   const data = [
-    ['Data/Hora', 'Nome', 'Série/Turma', 'Aprofundamento', 'ID'],
+    ['Data/Hora', 'Nome', 'Série/Turma', 'Práticas Integradoras 1', 'ID'],
     ...currentData.map(row => [ fmtDate(row.ts), row.nome, row.serie, row.pratica, row.id ])
   ];
   const wb = XLSX.utils.book_new();
@@ -1315,7 +1315,7 @@ function exportToDOCX() {
             <th>Data/Hora</th>
             <th>Nome</th>
             <th>Série/Turma</th>
-            <th>Aprofundamento</th>
+            <th>Práticas Integradoras 1</th>
             <th>ID</th>
           </tr>
         </thead>
@@ -1350,7 +1350,7 @@ function exportToCSV() {
     showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
     return;
   }
-  const headers = ['Data/Hora','Nome','Série/Turma','Aprofundamento','ID'];
+  const headers = ['Data/Hora','Nome','Série/Turma','Práticas Integradoras 1','ID'];
   const rows = currentData.map(row => [ fmtDate(row.ts), row.nome, row.serie, row.pratica, row.id ]);
   const csv = [headers, ...rows].map(arr => arr.map(v => {
     const s = (v ?? '').toString().replace(/"/g, '""');
