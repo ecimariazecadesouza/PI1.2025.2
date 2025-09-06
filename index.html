@@ -28,7 +28,7 @@
     }
     
     body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, Arial, sans-serif; 
+      font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Ubuntu, Cantarell, Arial, sans-serif; 
       background: linear-gradient(120deg, #0e0f13, #12131a 40%, #101628); 
       color: var(--txt); 
       min-height: 100vh; 
@@ -271,7 +271,7 @@
     }
     
     button::before {
-      content: ''; 
+      content: \'\'; 
       position: absolute; 
       top: 0; 
       left: -100%; 
@@ -331,7 +331,7 @@
     
     select {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa3b2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-image: url(\"data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%239aa3b2\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Cpath d=\'m6 9 6 6 6-6\'%3E%3C/svg%3E\");
       background-repeat: no-repeat;
       background-position: right 16px center;
       background-size: 16px;
@@ -429,7 +429,7 @@
 
   <script>
     /* ================== API autodetect ================== */
-    const DEFAULT_API = "https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp/exec";
+    const DEFAULT_API = \"https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp/exec\";
     
     function getQueryParam(name) { 
       const url = new URL(location.href); 
@@ -438,14 +438,14 @@
     }
     
     async function resolveApi() {
-      const queryParam = getQueryParam('api'); 
+      const queryParam = getQueryParam(\'api\'); 
       if (queryParam) return queryParam;
       
-      const localStorageApi = localStorage.getItem('pi_api'); 
+      const localStorageApi = localStorage.getItem(\'pi_api\'); 
       if (localStorageApi) return localStorageApi;
       
       try { 
-        const response = await fetch('config.json', { cache: 'no-store' }); 
+        const response = await fetch(\'config.json\', { cache: \'no-store\' }); 
         if (response.ok) { 
           const config = await response.json(); 
           if (config && config.api) return String(config.api);
@@ -456,22 +456,22 @@
     }
 
     /* ================== Constantes de regra ================== */
-    const BLOQUEADA_1_ANO = 'Estratégias para fomentar a escrita autoral no contexto da redação do ENEM: uma abordagem desconstrutiva dos modelos padronizados';
+    const BLOQUEADA_1_ANO = \'Estratégias para fomentar a escrita autoral no contexto da redação do ENEM: uma abordagem desconstrutiva dos modelos padronizados\';
     
     function isPrimeiroAno(serie) { 
-      return /^1[°º]\s[ABCDE]$/i.test(String(serie || '').trim()); 
+      return /^1[°º]\\s[ABCDE]$/i.test(String(serie || \'\').trim()); 
     }
 
     /* ================== DOM ================== */
     const $ = (selector) => document.querySelector(selector);
-    const form = $("#form");
-    const selPra = $("#pratica");
-    const chips = $("#chips");
-    const statusBox = $("#status");
-    const btn = $("#btn");
-    const lastSync = $("#lastSync");
-    const inpNome = $("#nome");
-    const inpSerie = $("#serie");
+    const form = $(\"#form\");
+    const selPra = $(\"#pratica\");
+    const chips = $(\"#chips\");
+    const statusBox = $(\"#status\");
+    const btn = $(\"#btn\");
+    const lastSync = $(\"#lastSync\");
+    const inpNome = $(\"#nome\");
+    const inpSerie = $(\"#serie\");
 
     /* ================== Estado ================== */
     let API_URL = DEFAULT_API;
@@ -494,20 +494,20 @@
       const data = filteredBySerie(items);
       // mantém seleção se ainda válida
       const previousSelection = selPra.value;
-      selPra.innerHTML = '';
+      selPra.innerHTML = \'\';
       
-      const defaultOption = document.createElement('option');
-      defaultOption.value = ''; 
+      const defaultOption = document.createElement(\'option\');
+      defaultOption.value = \'\'; 
       defaultOption.disabled = true; 
       defaultOption.selected = true;
-      defaultOption.textContent = 'Selecione uma prática';
+      defaultOption.textContent = \'Selecione uma prática\';
       selPra.appendChild(defaultOption);
 
       data.forEach(item => {
         const remaining = +item.restantes || 0;
-        const option = document.createElement("option");
+        const option = document.createElement(\"option\");
         option.value = item.pratica;
-        option.textContent = `${item.pratica} ${remaining > 0 ? `(${remaining} vagas)` : '(ESGOTADO)'}`;
+        option.textContent = `${item.pratica} ${remaining > 0 ? `(${remaining} vagas)` : \'(ESGOTADO)\'}`;
         if (remaining <= 0) option.disabled = true;
         selPra.appendChild(option);
       });
@@ -520,20 +520,20 @@
 
     function renderChips(items) {
       const data = filteredBySerie(items);
-      chips.innerHTML = "";
+      chips.innerHTML = \"\";
       const fragment = document.createDocumentFragment();
 
       data.forEach(item => {
         const remaining = +item.restantes || 0;
-        const pill = document.createElement('span');
-        pill.className = 'pill' + (remaining === 0 ? ' soldout' : '');
-        pill.setAttribute('aria-label', `${item.pratica}: ${remaining} vagas disponíveis`);
+        const pill = document.createElement(\'span\');
+        pill.className = \'pill\' + (remaining === 0 ? \' soldout\' : \'\');
+        pill.setAttribute(\'aria-label\', `${item.pratica}: ${remaining} vagas disponíveis`);
         
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = item.pratica.length > 40 ? item.pratica.substring(0, 40) + '…' : item.pratica;
+        const nameSpan = document.createElement(\'span\');
+        nameSpan.textContent = item.pratica.length > 40 ? item.pratica.substring(0, 40) + \'…\' : item.pratica;
         
-        const strong = document.createElement('strong');
-        strong.textContent = `${remaining} ${remaining === 1 ? 'vaga' : 'vagas'}`;
+        const strong = document.createElement(\'strong\');
+        strong.textContent = `${remaining} ${remaining === 1 ? \'vaga\' : \'vagas\'}`;
         
         pill.appendChild(nameSpan);
         pill.appendChild(strong);
@@ -545,16 +545,16 @@
 
     function setStatus(message, type) { 
       statusBox.textContent = message; 
-      statusBox.className = 'status ' + (type || ''); 
-      statusBox.style.display = 'block';
-      statusBox.setAttribute('aria-live', 'assertive');
+      statusBox.className = \'status \' + (type || \'\'); 
+      statusBox.style.display = \'block\';
+      statusBox.setAttribute(\'aria-live\', \'assertive\');
     }
     
     function clearStatus() { 
-      statusBox.style.display = 'none'; 
-      statusBox.textContent = ''; 
-      statusBox.className = 'status'; 
-      statusBox.removeAttribute('aria-live');
+      statusBox.style.display = \'none\'; 
+      statusBox.textContent = \'\'; 
+      statusBox.className = \'status\'; 
+      statusBox.removeAttribute(\'aria-live\');
     }
 
     /* ================== Data ================== */
@@ -570,115 +570,107 @@
         
         renderOptions(items); 
         renderChips(items); 
-        lastSync.textContent = "Atualizado " + new Date().toLocaleTimeString('pt-BR');
+        lastSync.textContent = \"Atualizado \" + new Date().toLocaleTimeString(\'pt-BR\');
       } catch (error) {
-        setStatus("⚠️ Não foi possível carregar a disponibilidade. Tente novamente.", "error");
-        lastSync.textContent = "Erro na sincronização";
+        setStatus(\"⚠️ Não foi possível carregar a disponibilidade. Tente novamente.\", \"error\");
+        lastSync.textContent = \"Erro na sincronização\";
       } finally {
         btn.disabled = false;
       }
     }
 
     /* ================== Eventos ================== */
-    form.addEventListener("submit", async (event) => {
+    form.addEventListener(\"submit\", async (event) => {
       event.preventDefault(); 
       clearStatus();
 
-      const nome = (inpNome.value || '').trim();
+      const nome = (inpNome.value || \'\').trim();
       const serie = currentSerie();
       const pratica = selPra.value;
 
       if (!nome || !serie || !pratica) { 
-        setStatus("⚠️ Por favor, preencha todos os campos obrigatórios.", "error"); 
+        setStatus(\"⚠️ Por favor, preencha todos os campos obrigatórios.\", \"error\"); 
         
         // Destacar campos não preenchidos
-        if (!nome) inpNome.classList.add('input-error');
-        if (!serie) inpSerie.classList.add('input-error');
-        if (!pratica) selPra.classList.add('input-error');
+        if (!nome) inpNome.classList.add(\'input-error\');
+        if (!serie) inpSerie.classList.add(\'input-error\');
+        if (!pratica) selPra.classList.add(\'input-error\');
         
         return; 
       }
       
       // UX guard: bloqueio 1º ano (servidor também valida)
       if (isPrimeiroAno(serie) && pratica === BLOQUEADA_1_ANO) {
-        setStatus("Esta prática não está disponível para o 1º ano. Escolha outra opção.", "error");
+        setStatus(\"Esta prática não está disponível para o 1º ano. Escolha outra opção.\", \"error\");
         return;
       }
 
       btn.disabled = true; 
-      btn.innerHTML = '<span class="loading-spinner"></span>Enviando inscrição...';
+      btn.innerHTML = \'<span class=\"loading-spinner\"></span>Enviando inscrição...\';
 
       try {
         const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {"Content-Type": "text/plain;charset=utf-8"},
+          method: \"POST\",
+          headers: {\"Content-Type\": \"text/plain;charset=utf-8\"},
           body: JSON.stringify({nome, serie, pratica})
         });
         
         const json = await response.json();
 
         if (json.ok) { 
-          setStatus("🎉 Inscrição registrada com sucesso! Sua vaga está garantida.", "success");
+          setStatus(\"🎉 Inscrição registrada com sucesso! Sua vaga está garantida.\", \"success\");
           form.reset(); 
           await loadAvailability();
-          statusBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          statusBox.scrollIntoView({ behavior: \'smooth\', block: \'center\' });
         } else if (json.full) {
-          setStatus("😔 Essa prática esgotou as vagas. Escolha outra opção disponível.", "error");
+          setStatus(\"😔 Essa prática esgotou as vagas. Escolha outra opção disponível.\", \"error\");
           await loadAvailability();
         } else {
-          setStatus("❌ Erro: " + (json.error || "não foi possível concluir a inscrição."), "error");
+          setStatus(\"❌ Erro: \" + (json.error || \"não foi possível concluir a inscrição.\"), \"error\");
         }
       } catch (error) {
-        setStatus("🔌 Falha na conexão. Verifique sua internet e tente novamente.", "error");
+        setStatus(\"🔌 Falha na conexão. Verifique sua internet e tente novamente.\", \"error\");
       } finally {
         btn.disabled = false; 
-        btn.innerHTML = '<span class="icon-wrapper">✨</span> Confirmar Inscrição'; 
+        btn.innerHTML = \'<span class=\"icon-wrapper\">✨</span> Confirmar Inscrição\'; 
       }
     });
 
     // Atualiza opções quando a série muda
-    inpSerie.addEventListener('change', () => {
+    inpSerie.addEventListener(\'change\', () => {
       const previousPractice = selPra.value;
       renderOptions(availabilityCache);
       renderChips(availabilityCache);
       
       // Remove classes de erro se houver
-      inpSerie.classList.remove('input-error');
+      inpSerie.classList.remove(\'input-error\');
       
       // se a prática escolhida ficou inválida, limpa
       if (!Array.from(selPra.options).some(option => option.value === previousPractice && !option.disabled)) {
-        selPra.value = "";
+        selPra.value = \"\";
       }
     });
 
     // Validação visual do nome
-    inpNome.addEventListener('input', function() {
+    inpNome.addEventListener(\'input\', function() {
       if (this.value.trim().length < 3) {
-        this.classList.add('input-error');
-        this.classList.remove('input-success');
+        this.classList.add(\'input-error\');
+        this.classList.remove(\'input-success\');
       } else {
-        this.classList.remove('input-error');
-        this.classList.add('input-success');
+        this.classList.remove(\'input-error\');
+        this.classList.add(\'input-success\');
       }
     });
 
     // Remove classes de erro ao interagir com os selects
-    selPra.addEventListener('change', function() {
-      this.classList.remove('input-error');
+    selPra.addEventListener(\'change\', function() {
+      this.classList.remove(\'input-error\');
     });
 
     // Efeito pill hover
-    document.addEventListener('DOMContentLoaded', function() {
-      const style = document.createElement('style');
-      style.textContent = `
-        .pill {
-          transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
-        }
-        .pill:hover { 
-          transform: translateY(-2px) scale(1.02); 
-          box-shadow: 0 4px 12px rgba(124,92,255,0.2); 
-        }
-      `;
+    document.addEventListener(\'DOMContentLoaded\', function() {
+      const style = document.createElement(\'style\');
+      style.textContent = `\n        .pill {\n          transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;\n        }\n        .pill:hover { \n          transform: translateY(-2px) scale(1.02); \n          box-shadow: 0 4px 12px rgba(124,92,255,0.2); \n        }\n      `;
       document.head.appendChild(style);
     });
 
@@ -691,3 +683,5 @@
   </script>
 </body>
 </html>
+
+
