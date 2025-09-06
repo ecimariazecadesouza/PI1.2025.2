@@ -513,7 +513,7 @@
     <!-- Header -->
     <div class="header">
       <h1><i class="fas fa-shield-alt"></i> Painel Administrativo</h1>
-      <p class="subtitle">Gestão de Práticas Integradoras • 2025.2</p>
+      <p class="subtitle">Gestão de Práticas Integradoras • 2025</p>
     </div>
 
     <!-- Estatísticas -->
@@ -690,7 +690,7 @@
 
   <script>
     // IMPORTANTE: Substitua esta URL pela URL do seu Google Apps Script
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp";
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzoesgRePzwGDZ2ivMverJ2SBJhQU9h6wrEM_6j0HgtNcbdnPF8d-paqB4E2gLtux60/exec";
 
     
     // Elementos da interface
@@ -763,11 +763,8 @@
         const urlParams = new URLSearchParams({ callback: callbackName, ...params });
         const script = document.createElement('script');
         script.src = `${URL_SCRIPT}?${urlParams.toString()}`;
-        script.onerror = () => {
-          document.body.removeChild(script);
-          delete window[callbackName];
-          reject(new Error('Erro ao carregar o script do Google Apps Script.'));
-        };
+
+
         document.body.appendChild(script);
       });
     }
@@ -915,7 +912,7 @@
         preencherCapacidade();
         
         // Atualizar filtro de práticas
-        atualizarFiltroPraticas(dados.byPratica || {});
+         atualizarFiltroPraticas(dados.capacidade || []);
 
       } catch (error) {
         console.error("Erro ao carregar estatísticas:", error);
@@ -995,19 +992,19 @@
       capacidadeContainer.innerHTML = html;
     }
 
-    function atualizarFiltroPraticas(byPratica) {
+    function atualizarFiltroPraticas(capacidadeData) {
       const opcaoAtual = filtroPratica.value;
       filtroPratica.innerHTML = '<option value="">Todas as práticas</option>';
       
-      Object.keys(byPratica).sort().forEach(pratica => {
+      capacidadeData.sort((a, b) => a.pratica.localeCompare(b.pratica)).forEach(item => {
         const option = document.createElement('option');
-        option.value = pratica;
-        option.textContent = pratica;
+        option.value = item.pratica;
+        option.textContent = item.pratica;
         filtroPratica.appendChild(option);
       });
       
       // Restaurar seleção anterior se ainda existir
-      if (opcaoAtual && byPratica[opcaoAtual]) {
+      if (opcaoAtual && capacidadeData.some(item => item.pratica === opcaoAtual)) {
         filtroPratica.value = opcaoAtual;
       }
     }
