@@ -1,1217 +1,1580 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Área Administrativa - Gestão de Práticas Integradoras</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin • Práticas Integradoras 1 2025.2</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+<!-- Bibliotecas para exportação -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<style>
+  :root { 
+    --bg: #0a0d14; 
+    --card: #141a2a; 
+    --card-hover: #1a2138;
+    --txt: #e9ecf1; 
+    --muted: #9aa3b2; 
+    --accent: #7c5cff; 
+    --accent-hover: #8b6bff;
+    --success: #2fd180; 
+    --error: #ff6b7a; 
+    --warning: #ffa726;
+    --line: #1f2740;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --gradient: linear-gradient(135deg, var(--accent), #4c82ff);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  * { 
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    margin: 0;
+    background: linear-gradient(120deg, #0a0d14, #0e1322 45%, #0a1230);
+    color: var(--txt);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, Arial, sans-serif;
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  
+  .container { 
+    max-width: 1280px; 
+    margin: 0 auto; 
+    padding: 28px 24px; 
+  }
+  
+  .header { 
+    text-align: center; 
+    margin-bottom: 40px; 
+    padding: 0 16px;
+  }
+  
+  .header h1 {
+    margin: 0 0 12px;
+    font-size: 2.2rem; 
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  
+  .header p { 
+    margin: 0; 
+    color: var(--muted); 
+    font-size: 1.05rem; 
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px; 
+    margin-bottom: 28px;
+    box-shadow: 0 6px 24px var(--shadow);
+    transition: var(--transition);
+  }
+  
+  .card:hover { 
+    background: var(--card-hover); 
+    transform: translateY(-4px); 
+    box-shadow: 0 12px 36px var(--shadow); 
+  }
+  
+  .grid { 
+    display: grid; 
+    gap: 24px; 
+  }
+  
+  .grid-2 { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .grid-3 { 
+    grid-template-columns: 1fr; 
+  }
+  
+  .grid-4 { 
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+    gap: 20px;
+  }
+  
+  @media (min-width: 768px) {
+    .grid-2 { 
+      grid-template-columns: 1fr 1fr; 
     }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
+    
+    .grid-3 { 
+      grid-template-columns: 1fr 1fr 1fr; 
     }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
+  }
+  
+  .form-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+  }
+  
+  label { 
+    font-weight: 700; 
+    color: var(--txt); 
+    font-size: 0.95rem; 
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  input, select, button {
+    background: #0f1426; 
+    border: 1px solid var(--line); 
+    color: var(--txt);
+    padding: 15px 18px; 
+    border-radius: 14px; 
+    outline: none; 
+    transition: var(--transition); 
+    font-size: 15px;
+    font-family: inherit;
+  }
+  
+  input:focus, select:focus { 
+    border-color: var(--accent); 
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.15); 
+    transform: translateY(-1px);
+  }
+  
+  input::placeholder { 
+    color: var(--muted); 
+  }
+  
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa3b2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 16px;
+    padding-right: 48px;
+  }
+  
+  .btn {
+    background: var(--gradient); 
+    border: none; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: var(--transition);
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    text-decoration: none; 
+    min-width: 130px;
+    padding: 15px 20px;
+    border-radius: 14px;
+    font-size: 15px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(124, 92, 255, 0.3); 
+  }
+  
+  .btn:active { 
+    transform: translateY(0); 
+  }
+  
+  .btn:disabled { 
+    opacity: 0.6; 
+    cursor: not-allowed; 
+    transform: none; 
+  }
+  
+  .btn-secondary { 
+    background: #1a2138; 
+    border: 1px solid var(--line); 
+  }
+  
+  .btn-secondary:hover { 
+    background: #242b42; 
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1); 
+  }
+  
+  .btn-pdf { 
+    background: linear-gradient(135deg, #ff4757, #ff6b7a); 
+  }
+  
+  .btn-excel { 
+    background: linear-gradient(135deg, #2ed573, #2fd180); 
+  }
+  
+  .btn-word { 
+    background: linear-gradient(135deg, #3742fa, #4c82ff); 
+  }
+  
+  .btn-csv { 
+    background: linear-gradient(135deg, #ffa726, #ffb74d); 
+  }
+  
+  .export-buttons { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 14px; 
+    margin-top: 20px; 
+  }
+  
+  .stats-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 24px; 
+    margin-bottom: 36px; 
+  }
+  
+  .stat-card {
+    background: var(--card); 
+    border: 1px solid var(--line); 
+    border-radius: 18px; 
+    padding: 24px; 
+    text-align: center; 
+    transition: var(--transition);
+    position: relative; 
+    overflow: hidden;
+  }
+  
+  .stat-card::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    height: 4px; 
+    background: var(--gradient); 
+  }
+  
+  .stat-card:hover { 
+    transform: translateY(-6px); 
+    box-shadow: 0 12px 30px var(--shadow); 
+  }
+  
+  .stat-value { 
+    font-size: 2.2rem; 
+    font-weight: 800; 
+    color: var(--txt); 
+    margin: 12px 0; 
+  }
+  
+  .stat-label { 
+    color: var(--muted); 
+    font-size: 0.9rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    font-weight: 600;
+  }
+  
+  .controls { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 14px; 
+    align-items: center; 
+    margin-top: 24px; 
+  }
+  
+  .controls input { 
+    flex: 1; 
+    min-width: 220px; 
+  }
+  
+  .table-container { 
+    background: var(--card); 
+    border: 1px solid var(--line); 
+    border-radius: 18px; 
+    overflow: hidden; 
+    margin-top: 28px; 
+  }
+  
+  .table-header { 
+    padding: 22px 28px; 
+    border-bottom: 1px solid var(--line); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: rgba(124, 92, 255, 0.05); 
+  }
+  
+  .table-title { 
+    font-weight: 800; 
+    font-size: 1.2rem; 
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .table-count { 
+    color: var(--muted); 
+    font-size: 0.95rem; 
+  }
+  
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+  }
+  
+  th, td { 
+    padding: 18px 22px; 
+    text-align: left; 
+    border-bottom: 1px solid var(--line); 
+    position: relative;
+  }
+  
+  th { 
+    background: rgba(124, 92, 255, 0.05); 
+    font-weight: 700; 
+    color: var(--txt); 
+    font-size: 0.95rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    position: sticky;
+    top: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  th:hover {
+    background: rgba(124, 92, 255, 0.1);
+  }
+  
+  .sort-icon {
+    margin-left: 5px;
+    opacity: 0.5;
+    transition: var(--transition);
+  }
+  
+  th.active .sort-icon {
+    opacity: 1;
+  }
+  
+  tr:hover td { 
+    background: rgba(124, 92, 255, 0.08); 
+  }
+  
+  .loading { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 70px 24px; 
+    color: var(--muted); 
+  }
+  
+  .spinner { 
+    width: 44px; 
+    height: 44px; 
+    border: 3px solid var(--line); 
+    border-top: 3px solid var(--accent); 
+    border-radius: 50%; 
+    animation: spin 1s linear infinite; 
+    margin-bottom: 20px; 
+  }
+  
+  @keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+  }
+  
+  .hide { 
+    display: none !important; 
+  }
+  
+  .message { 
+    padding: 14px 18px; 
+    border-radius: 12px; 
+    font-size: 0.95rem; 
+    margin: 14px 0; 
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .message.success { 
+    background: rgba(47, 209, 128, 0.1); 
+    border: 1px solid rgba(47, 209, 128, 0.3); 
+    color: var(--success); 
+  }
+  
+  .message.error { 
+    background: rgba(255, 107, 122, 0.1); 
+    border: 1px solid rgba(255, 107, 122, 0.3); 
+    color: var(--error); 
+  }
+  
+  .message.warning { 
+    background: rgba(255, 167, 38, 0.1); 
+    border: 1px solid rgba(255, 167, 38, 0.3); 
+    color: var(--warning); 
+  }
+  
+  .capacity-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 20px; 
+    margin-top: 24px; 
+  }
+  
+  .capacity-item { 
+    background: #0f1426; 
+    border: 1px solid var(--line); 
+    border-radius: 14px; 
+    padding: 20px; 
+    transition: var(--transition); 
+  }
+  
+  .capacity-item:hover { 
+    background: #141a2a; 
+    transform: translateY(-4px); 
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .capacity-name { 
+    font-weight: 700; 
+    margin-bottom: 12px; 
+    color: var(--txt); 
+    font-size: 1rem;
+  }
+  
+  .capacity-numbers { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 12px; 
+  }
+  
+  .capacity-ratio { 
+    font-size: 1.2rem; 
+    font-weight: 800; 
+  }
+  
+  .capacity-status { 
+    font-size: 0.9rem; 
+    font-weight: 700; 
+    padding: 6px 12px; 
+    border-radius: 8px; 
+  }
+  
+  .capacity-status.available { 
+    background: rgba(47, 209, 128, 0.2); 
+    color: var(--success); 
+  }
+  
+  .capacity-status.full { 
+    background: rgba(255, 107, 122, 0.2); 
+    color: var(--error); 
+  }
+  
+  .progress-bar { 
+    width: 100%; 
+    height: 8px; 
+    background: var(--line); 
+    border-radius: 4px; 
+    overflow: hidden; 
+    margin-top: 12px; 
+  }
+  
+  .progress-fill { 
+    height: 100%; 
+    background: var(--gradient); 
+    transition: width 0.3s ease; 
+  }
+  
+  .small-text { 
+    font-size: 0.85rem; 
+    color: var(--muted); 
+    line-height: 1.5;
+  }
+  
+  .muted { 
+    color: var(--muted); 
+    font-size: .9rem; 
+    line-height: 1.5;
+  }
+  
+  .linklike { 
+    background: none; 
+    border: none; 
+    padding: 0; 
+    color: var(--accent); 
+    cursor: pointer; 
+    text-decoration: underline; 
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .input-success {
+    border-color: rgba(47, 209, 128, 0.5) !important;
+  }
+  
+  .input-error {
+    border-color: rgba(255, 107, 122, 0.5) !important;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-top: 1px solid var(--line);
+    background: var(--card);
+  }
+  
+  .pagination-info {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .pagination-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .pagination-btn {
+    padding: 8px 12px;
+    min-width: auto;
+    font-size: 0.9rem;
+  }
+  
+  .pagination-select {
+    padding: 8px 12px;
+    min-width: auto;
+    margin-left: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .container { 
+      padding: 20px 16px; 
     }
-
-    .header {
-      background: linear-gradient(135deg, #2c3e50, #4a6491);
-      color: white;
-      padding: 30px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      text-align: center;
+    
+    .header h1 { 
+      font-size: 1.8rem; 
     }
-
-    .header h1 {
-      font-size: 32px;
-      margin-bottom: 10px;
-      font-weight: 700;
+    
+    .header p {
+      font-size: 1rem;
     }
-
-    .header .subtitle {
-      font-size: 18px;
-      opacity: 0.9;
-      font-weight: 300;
+    
+    .card { 
+      padding: 20px; 
     }
-
+    
+    .controls { 
+      flex-direction: column; 
+      align-items: stretch; 
+    }
+    
+    .controls input, 
+    .controls button { 
+      width: 100%; 
+    }
+    
+    .export-buttons { 
+      flex-direction: column; 
+    }
+    
+    .export-buttons button { 
+      width: 100%; 
+    }
+    
+    table { 
+      font-size: 0.9rem; 
+    }
+    
+    th, td { 
+      padding: 14px 12px; 
+    }
+    
     .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      text-align: center;
-      border-left: 4px solid #3498db;
-      transition: transform 0.2s ease;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .stat-value {
-      font-size: 36px;
-      font-weight: 700;
-      color: #2c3e50;
-      margin-bottom: 8px;
-    }
-
-    .stat-label {
-      color: #7f8c8d;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 30px;
-      margin-bottom: 30px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-    }
-
-    .card-header {
-      background: #f8f9fa;
-      padding: 20px;
-      border-bottom: 1px solid #e9ecef;
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #2c3e50;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .card-body {
-      padding: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #555;
-      font-size: 14px;
-    }
-
-    select, input[type="text"] {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e1e5e9;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      background-color: #fff;
-    }
-
-    select:focus, input[type="text"]:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-    }
-
-    .btn {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      margin-right: 10px;
-      margin-bottom: 10px;
-      position: relative;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-primary {
-      background-color: #3498db;
-      color: white;
-    }
-
-    .btn-success {
-      background-color: #27ae60;
-      color: white;
-    }
-
-    .btn-warning {
-      background-color: #f39c12;
-      color: white;
-    }
-
-    .btn-danger {
-      background-color: #e74c3c;
-      color: white;
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-
-    .btn-outline {
-      background-color: transparent;
-      border: 2px solid #3498db;
-      color: #3498db;
-    }
-
-    .btn-outline:hover {
-      background-color: #3498db;
-      color: white;
-    }
-
-    .btn-block {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .btn-sm {
-      padding: 8px 12px;
-      font-size: 12px;
-    }
-
-    /* Spinner para botões */
-    .btn-loading::after {
-      content: "";
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      margin: auto;
-      border: 2px solid transparent;
-      border-top-color: #ffffff;
-      border-radius: 50%;
-      animation: button-loading-spinner 1s ease infinite;
-    }
-
-    @keyframes button-loading-spinner {
-      from {
-        transform: rotate(0turn);
-      }
-      to {
-        transform: rotate(1turn);
-      }
-    }
-
-    .table-container {
-      overflow-x: auto;
-      margin-top: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-    }
-
-    th, td {
-      padding: 15px 12px;
-      text-align: left;
-      border-bottom: 1px solid #e9ecef;
-    }
-
-    th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-      color: #495057;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }
     
-    /* Estilo para cabeçalhos ordenáveis */
-    th.sortable {
-      cursor: pointer;
-      position: relative;
-      user-select: none;
-      padding-right: 30px;
-    }
-    
-    th.sortable:hover {
-      background-color: #e9ecef;
-    }
-    
-    th.sortable::after {
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      content: "\f0dc"; /* ícone de setas para cima e para baixo */
-      position: absolute;
-      right: 10px;
-      color: #bdc3c7;
-      transition: color 0.2s ease;
-    }
-    
-    th.sortable.asc::after {
-      content: "\f0de"; /* ícone de seta para cima */
-      color: #3498db;
-    }
-    
-    th.sortable.desc::after {
-      content: "\f0dd"; /* ícone de seta para baixo */
-      color: #3498db;
-    }
-
-    tr:hover {
-      background-color: #f8f9fa;
-    }
-
-    /* NOVO: Estilos para paginação */
-    .pagination-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
-      padding: 15px 0;
-      border-top: 1px solid #e9ecef;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .pagination-info {
-      color: #6c757d;
-      font-size: 14px;
-    }
-
-    .pagination-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .pagination-select {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-    }
-
-    .pagination-select select {
-      width: auto;
-      min-width: 80px;
-      padding: 8px 12px;
-      font-size: 14px;
-    }
-
-    .pagination-buttons {
-      display: flex;
-      gap: 5px;
-    }
-
-    .pagination-buttons .btn {
-      margin: 0;
-      padding: 8px 12px;
-      font-size: 14px;
-    }
-
     .capacity-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
+      grid-template-columns: 1fr;
     }
-
-    .capacity-card {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      border-left: 4px solid #3498db;
-      transition: all 0.2s ease;
-    }
-
-    .capacity-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .capacity-card h3 {
-      margin-bottom: 15px;
-      font-size: 16px;
-      color: #2c3e50;
-      font-weight: 600;
-    }
-
-    .capacity-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background-color: #e9ecef;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #27ae60, #2ecc71);
-      transition: width 0.3s ease;
-    }
-
-    .loading {
-      display: flex;
+    
+    .pagination {
       flex-direction: column;
-      align-items: center;
+      gap: 15px;
+      align-items: stretch;
+    }
+    
+    .pagination-controls {
+      justify-content: space-between;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 16px 12px;
+    }
+    
+    .header h1 {
+      font-size: 1.6rem;
+    }
+    
+    .card {
+      padding: 18px 16px;
+      border-radius: 16px;
+    }
+    
+    th, td {
+      padding: 12px 8px;
+      font-size: 0.85rem;
+    }
+    
+    .table-header {
+      padding: 18px 20px;
+    }
+    
+    .pagination-controls {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .pagination-buttons {
       justify-content: center;
-      padding: 40px;
-      color: #7f8c8d;
     }
-
-    .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #3498db;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: #7f8c8d;
-    }
-
-    .empty-state i {
-      font-size: 48px;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
-
-    .alert {
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      border-left: 4px solid;
-    }
-
-    .alert-danger {
-      background-color: #f8d7da;
-      color: #721c24;
-      border-left-color: #dc3545;
-    }
-
-    .alert-warning {
-      background-color: #fff3cd;
-      color: #856404;
-      border-left-color: #ffc107;
-    }
-
-    @media (max-width: 1024px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-      
-      .header {
-        padding: 20px;
-      }
-      
-      .header h1 {
-        font-size: 24px;
-      }
-      
-      .capacity-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .btn {
-        width: 100%;
-        margin-right: 0;
-        justify-content: center;
-      }
-
-      .pagination-container {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
-      }
-
-      .pagination-controls {
-        justify-content: center;
-      }
-
-      .pagination-buttons {
-        justify-content: center;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h1><i class="fas fa-shield-alt"></i> Painel Administrativo</h1>
-      <p class="subtitle">Gestão de Práticas Integradoras • 2025</p>
+<div class="container">
+  <div class="header">
+    <h1><span class="icon-wrapper">🔐</span> Admin • Práticas Integradoras 1 2025.2</h1>
+    <p>Painel administrativo para visualizar estatísticas, filtrar e exportar inscrições</p>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginCard" class="card">
+    <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;"><span class="icon-wrapper">🔒</span> Acesso Administrativo</h3>
+
+    <div class="muted" id="apiInfo">Detectando API...</div>
+
+    <div id="apiEditor" class="grid grid-2 hide" style="margin-top:16px;">
+      <div class="form-group">
+        <label for="api"><span class="icon-wrapper">🌐</span> URL da API</label>
+        <input id="api" placeholder="https://script.google.com/macros/s/....../exec" />
+        <small class="small-text">Você pode sobrescrever a URL detectada aqui</small>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <button id="toggleApi" class="linklike" type="button"><span class="icon-wrapper">⚙️</span> Configurar API</button>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:20px;">
+      <div class="form-group">
+        <label for="pwd"><span class="icon-wrapper">🔑</span> Senha</label>
+        <input id="pwd" type="password" placeholder="••••••••" />
+        <small class="small-text">Somente a senha é necessária para entrar</small>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="btEnter" class="btn"><span class="icon-wrapper">🚀</span>Entrar</button>
+      <span id="loginMsg" class="message hide" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hide">
+    <div class="controls" style="justify-content:flex-end; margin-top:0; margin-bottom:16px;">
+      <button id="btLogout" class="btn btn-secondary"><span class="icon-wrapper">👋</span>Sair</button>
     </div>
 
     <!-- Estatísticas -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-value" id="totalInscricoes">-</div>
-        <div class="stat-label">Total de Inscrições</div>
+        <div class="stat-label"><span class="icon-wrapper">📊</span> Total de Inscrições</div>
+        <div class="stat-value" id="tot">-</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="totalPraticas">-</div>
-        <div class="stat-label">Práticas Ativas</div>
+        <div class="stat-label"><span class="icon-wrapper">📚</span> Aprofundamentos Ativos</div>
+        <div class="stat-value" id="active">-</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="vagasPreenchidas">-</div>
-        <div class="stat-label">Ocupação Média</div>
+        <div class="stat-label"><span class="icon-wrapper">📈</span> Ocupação Média</div>
+        <div class="stat-value" id="avg-occupancy">-</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="ultimaAtualizacao">-</div>
-        <div class="stat-label">Última Atualização</div>
+        <div class="stat-label"><span class="icon-wrapper">⚠️</span> Práticas Esgotadas</div>
+        <div class="stat-value" id="esgot">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="icon-wrapper">🕒</span> Última Atualização</div>
+        <div class="stat-value" id="last" style="font-size: 1.1rem;">-</div>
       </div>
     </div>
 
-    <!-- Alerta de configuração -->
-    <div id="alertConfig" class="alert alert-warning" style="display: none;">
-      <i class="fas fa-exclamation-triangle"></i>
-      <strong>Atenção:</strong> Configure a URL do Google Apps Script no código antes de usar o sistema.
-    </div>
-
-    <!-- Grid Principal -->
-    <div class="main-grid">
-      <!-- Filtros -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <i class="fas fa-filter"></i>
-            Filtros e Controles
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label for="filtroPratica">
-              <i class="fas fa-book"></i> Prática Integradora
-            </label>
-            <select id="filtroPratica">
-              <option value="">Todas as práticas</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="filtroSerie">
-              <i class="fas fa-school"></i> Série/Turma
-            </label>
-            <select id="filtroSerie">
-              <option value="">Todas as séries</option>
-              <option value="1° A">1° A</option>
-              <option value="1° B">1° B</option>
-              <option value="1° C">1° C</option>
-              <option value="1° D">1° D</option>
-              <option value="1° E">1° E</option>
-              <option value="2° A">2° A</option>
-              <option value="2° B">2° B</option>
-              <option value="2° C">2° C</option>
-              <option value="3° A">3° A</option>
-              <option value="3° B">3° B</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="filtroNome">
-              <i class="fas fa-search"></i> Buscar por nome
-            </label>
-            <input type="text" id="filtroNome" placeholder="Digite um nome...">
-          </div>
-
-          <button id="btnLimpar" class="btn btn-warning btn-block">
-            <i class="fas fa-eraser"></i> Limpar Filtros
-          </button>
-
-          <button id="btnAtualizar" class="btn btn-success btn-block">
-            <i class="fas fa-sync-alt"></i> Atualizar Dados
-          </button>
-        </div>
-      </div>
-
-      <!-- Tabela de Inscrições -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <i class="fas fa-table"></i>
-            Lista de Inscrições
-            <span id="contadorInscricoes" style="margin-left: auto; font-size: 14px; font-weight: normal;"></span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div style="margin-bottom: 15px;">
-            <button id="btnExportPDF" class="btn btn-danger">
-              <i class="fas fa-file-pdf"></i> Exportar PDF
-            </button>
-            <button id="btnExportExcel" class="btn btn-success">
-              <i class="fas fa-file-excel"></i> Exportar Excel
-            </button>
-          </div>
-          
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th class="sortable" data-sort="ts"><i class="fas fa-clock"></i> Data/Hora</th>
-                  <th class="sortable" data-sort="nome"><i class="fas fa-user"></i> Nome</th>
-                  <th class="sortable" data-sort="serie"><i class="fas fa-school"></i> Série</th>
-                  <th class="sortable" data-sort="pratica"><i class="fas fa-book"></i> Prática Integradora</th>
-                </tr>
-              </thead>
-              <tbody id="tabelaInscricoes">
-                <!-- Conteúdo dinâmico -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- NOVO: Controles de Paginação -->
-          <div class="pagination-container" id="paginationContainer" style="display: none;">
-            <div class="pagination-info" id="paginationInfo">
-              <!-- Informações da página atual -->
-            </div>
-            
-            <div class="pagination-controls">
-              <div class="pagination-select">
-                <label for="itemsPorPagina">Itens por página:</label>
-                <select id="itemsPorPagina">
-                  <option value="50">50</option>
-                  <option value="100" selected>100</option>
-                  <option value="150">150</option>
-                  <option value="200">200</option>
-                  <option value="300">300</option>
-                  <option value="400">400</option>
-                </select>
-              </div>
-              
-              <div class="pagination-buttons">
-                <button id="btnPrimeiraPagina" class="btn btn-outline btn-sm">
-                  <i class="fas fa-angle-double-left"></i> Primeira
-                </button>
-                <button id="btnPaginaAnterior" class="btn btn-outline btn-sm">
-                  <i class="fas fa-angle-left"></i> Anterior
-                </button>
-                <button id="btnProximaPagina" class="btn btn-outline btn-sm">
-                  Próxima <i class="fas fa-angle-right"></i>
-                </button>
-                <button id="btnUltimaPagina" class="btn btn-outline btn-sm">
-                  Última <i class="fas fa-angle-double-right"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Capacidade das Práticas -->
+    <!-- Filtros -->
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">
-          <i class="fas fa-chart-bar"></i>
-          Capacidade das Práticas Integradoras
+      <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;"><span class="icon-wrapper">🔍</span> Filtros e Busca</h3>
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label for="fPratica"><span class="icon-wrapper">📚</span> Aprofundamento</label>
+          <select id="fPratica">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fSerie"><span class="icon-wrapper">🏫</span> Série/Turma</label>
+          <select id="fSerie">
+            <option value="">Todas</option>
+            <option>1° A</option><option>1° B</option><option>1° C</option><option>1° D</option><option>1° E</option>
+            <option>2° A</option><option>2° B</option><option>2° C</option>
+            <option>3° A</option><option>3° B</option>
+          </select>
         </div>
       </div>
-      <div class="card-body">
-        <div id="capacidadeContainer" class="capacity-grid">
-          <!-- Conteúdo dinâmico -->
+      <div class="controls">
+        <input id="fQ" placeholder="🔍 Buscar por nome..." />
+        <button id="btClearFilters" class="btn btn-secondary"><span class="icon-wrapper">🗑️</span>Limpar Filtros</button>
+        <button id="btFiltrar" class="btn"><span class="icon-wrapper">🔄</span>Aplicar Filtros</button>
+        <span id="fltMsg" class="message hide" role="status" aria-live="polite"></span>
+      </div>
+      
+      <!-- Botões de Exportação -->
+      <div class="export-buttons">
+        <button id="btPDF" class="btn btn-pdf"><span class="icon-wrapper">📄</span>PDF</button>
+        <button id="btXLSX" class="btn btn-excel"><span class="icon-wrapper">📊</span>XLSX</button>
+        <button id="btDOCX" class="btn btn-word"><span class="icon-wrapper">📝</span>DOC</button>
+        <button id="btCSV" class="btn btn-csv"><span class="icon-wrapper">📋</span>CSV</button>
+      </div>
+    </div>
+
+    <!-- Tabela de Inscrições -->
+    <div class="table-container">
+      <div class="table-header">
+        <div class="table-title"><span class="icon-wrapper">📋</span> Inscrições</div>
+        <div class="table-count" id="count">-</div>
+      </div>
+      
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Carregando dados...</div>
+      </div>
+      
+      <div class="hide" id="tblWrap">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th data-sort="ts"><span class="icon-wrapper">🕒</span> Data/Hora <span class="sort-icon">↕️</span></th>
+              <th data-sort="nome"><span class="icon-wrapper">👤</span> Nome <span class="sort-icon">↕️</span></th>
+              <th data-sort="serie"><span class="icon-wrapper">🏫</span> Série/Turma <span class="sort-icon">↕️</span></th>
+              <th data-sort="pratica"><span class="icon-wrapper">📚</span> Aprofundamento <span class="sort-icon">↕️</span></th>
+              <th><span class="icon-wrapper">🆔</span> ID</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        
+        <!-- Paginação -->
+        <div class="pagination hide" id="pagination">
+          <div class="pagination-info" id="pagination-info">Mostrando 0-0 de 0 registros</div>
+          <div class="pagination-controls">
+            <div class="pagination-buttons">
+              <button class="btn btn-secondary pagination-btn" id="first-page" title="Primeira página">⏮️</button>
+              <button class="btn btn-secondary pagination-btn" id="prev-page" title="Página anterior">◀️</button>
+              <span style="padding: 8px 12px; color: var(--muted);" id="current-page">1</span>
+              <button class="btn btn-secondary pagination-btn" id="next-page" title="Próxima página">▶️</button>
+              <button class="btn btn-secondary pagination-btn" id="last-page" title="Última página">⏭️</button>
+            </div>
+            <select class="pagination-select" id="page-size">
+              <option value="10">10 por página</option>
+              <option value="25">25 por página</option>
+              <option value="50">50 por página</option>
+              <option value="100">100 por página</option>
+            </select>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Capacidade -->
+    <div class="card">
+      <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;"><span class="icon-wrapper">📊</span> Capacidade dos Aprofundamentos</h3>
+      <div class="capacity-grid" id="capGrid"></div>
     </div>
   </div>
+</div>
 
-  <script>
-    // IMPORTANTE: Substitua esta URL pela URL do seu Google Apps Script
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp/exec";
+<script>
+/* ============ CONFIG / API AUTODETECT ============ */
+const DEFAULT_API = "https://script.google.com/macros/s/AKfycbykc7MNsoeSVymKeGM1lAz0x6soF3UvFwLmqaLG6pZuCdCVjec_hZAp1JZghEUhqpZp/exec";
 
+function getQueryParam(name) {
+  const u = new URL(location.href);
+  const v = u.searchParams.get(name);
+  return v && v.trim() ? v.trim() : null;
+}
+
+async function resolveApi() {
+  const qp = getQueryParam('api'); 
+  if (qp) return qp;
+  
+  const ls = localStorage.getItem('pi_api'); 
+  if (ls) return ls;
+  
+  try {
+    const r = await fetch('config.json', { cache: 'no-store' });
+    if (r.ok) { 
+      const cfg = await r.json(); 
+      if (cfg && cfg.api) return String(cfg.api); 
+    }
+  } catch(_) {}
+  
+  return DEFAULT_API;
+}
+
+/* ============ ELEMENTOS E VARS ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const apiInfo = $('#apiInfo'), apiEditor = $('#apiEditor'), apiEl = $('#api');
+const toggleApiBtn = $('#toggleApi');
+
+const pwdEl = $('#pwd'), enterBtn = $('#btEnter'), loginCard = $('#loginCard'), loginMsg = $('#loginMsg'), dash = $('#dash');
+const fPratica = $('#fPratica'), fSerie = $('#fSerie'), fQ = $('#fQ'), btFiltrar = $('#btFiltrar'), btClearFilters = $('#btClearFilters');
+const btPDF = $('#btPDF'), btXLSX = $('#btXLSX'), btDOCX = $('#btDOCX'), btCSV = $('#btCSV');
+const totEl = $('#tot'), activeEl = $('#active'), avgOccupancyEl = $('#avg-occupancy'), esgotEl = $('#esgot'), lastEl = $('#last'), 
+      loading = $('#loading'), tblWrap = $('#tblWrap'), tbody = $('#tbody'), count = $('#count'), capGrid = $('#capGrid');
+const btLogout = $('#btLogout');
+const pagination = $('#pagination'), paginationInfo = $('#pagination-info'), currentPageEl = $('#current-page');
+const firstPageBtn = $('#first-page'), prevPageBtn = $('#prev-page'), nextPageBtn = $('#next-page'), lastPageBtn = $('#last-page'), pageSizeSelect = $('#page-size');
+
+let TOKEN = '', API = '';
+let baseData = [];     // dados brutos do backend (sem ordenação)
+let currentData = [];  // dados exibidos/exportados (com ordenação aplicada)
+let sortConfig = { field: 'ts', direction: 'desc' }; // campo e direção de ordenação
+let listController, statsController;
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalPages = 1;
+let debounceTimer;
+let autoRefreshTimer;
+
+/* ============ SESSÃO ============ */
+function setSession(a, t) { 
+  sessionStorage.setItem('pi_api', a); 
+  sessionStorage.setItem('pi_token', t); 
+}
+
+function restoreSession() {
+  const a = sessionStorage.getItem('pi_api'), t = sessionStorage.getItem('pi_token');
+  if (a && t) { 
+    API = a; 
+    TOKEN = t; 
+    return true; 
+  }
+  return false;
+}
+
+/* ============ MENSAGENS ============ */
+function showMessage(element, text, type = 'error') {
+  element.textContent = text;
+  element.className = `message ${type}`;
+  element.classList.remove('hide');
+  
+  // Adiciona ícone conforme o tipo de mensagem
+  let icon = '❌';
+  if (type === 'success') icon = '✅';
+  if (type === 'warning') icon = '⚠️';
+  
+  element.innerHTML = `<span class="icon-wrapper">${icon}</span> ${text}`;
+  
+  if (type === 'success') setTimeout(() => element.classList.add('hide'), 3000);
+}
+
+function hideMessage(element) { 
+  element.classList.add('hide'); 
+}
+
+/* ============ FETCH (GAS: key na query) ============ */
+async function authedGet(url, params = {}, extra = {}) {
+  const u = new URL(url);
+  Object.keys(params).forEach(k => {
+    const v = params[k];
+    if (v != null && v !== '') u.searchParams.append(k, v);
+  });
+  u.searchParams.append('key', TOKEN);
+
+  const res = await fetch(u.toString(), { signal: extra.signal });
+  const text = await res.text();
+  let json;
+  try { 
+    json = JSON.parse(text); 
+  } catch(e) { 
+    throw new Error('Resposta não-JSON: ' + text.substring(0, 120)); 
+  }
+  
+  if (!res.ok || json.ok === false) throw new Error(json.error || ('HTTP ' + res.status));
+  return json;
+}
+
+/* ============ UTIL ============ */
+function fmtDate(iso) { 
+  try { 
+    return new Date(iso).toLocaleString('pt-BR'); 
+  } catch(_) { 
+    return iso || ''; 
+  } 
+}
+
+function applySort(rows) {
+  const arr = [...rows];
+  const field = sortConfig.field;
+  const direction = sortConfig.direction === 'asc' ? 1 : -1;
+  
+  arr.sort((a, b) => {
+    let valueA = a[field] || '';
+    let valueB = b[field] || '';
     
-    // Elementos da interface
-    const filtroPratica = document.getElementById("filtroPratica");
-    const filtroSerie = document.getElementById("filtroSerie");
-    const filtroNome = document.getElementById("filtroNome");
-    const btnLimpar = document.getElementById("btnLimpar");
-    const btnAtualizar = document.getElementById("btnAtualizar");
-    const tabelaInscricoes = document.getElementById("tabelaInscricoes");
-    const capacidadeContainer = document.getElementById("capacidadeContainer");
-    const btnExportPDF = document.getElementById("btnExportPDF");
-    const btnExportExcel = document.getElementById("btnExportExcel");
-    const alertConfig = document.getElementById("alertConfig");
+    // Para ordenação de datas
+    if (field === 'ts') {
+      valueA = new Date(valueA).getTime();
+      valueB = new Date(valueB).getTime();
+    }
     
-    // Elementos de estatísticas
-    const totalInscricoes = document.getElementById("totalInscricoes");
-    const totalPraticas = document.getElementById("totalPraticas");
-    const vagasPreenchidas = document.getElementById("vagasPreenchidas");
-    const ultimaAtualizacao = document.getElementById("ultimaAtualizacao");
-    const contadorInscricoes = document.getElementById("contadorInscricoes");
-
-    // NOVO: Elementos de paginação
-    const paginationContainer = document.getElementById("paginationContainer");
-    const paginationInfo = document.getElementById("paginationInfo");
-    const itemsPorPagina = document.getElementById("itemsPorPagina");
-    const btnPrimeiraPagina = document.getElementById("btnPrimeiraPagina");
-    const btnPaginaAnterior = document.getElementById("btnPaginaAnterior");
-    const btnProximaPagina = document.getElementById("btnProximaPagina");
-    const btnUltimaPagina = document.getElementById("btnUltimaPagina");
-
-    // Variáveis de estado
-    let allInscricoesData = []; // Armazena TODAS as inscrições, sem filtros
-    let filteredAndSortedData = []; // Armazena os dados filtrados e ordenados
-    let capacidadeData = [];
-    let sortState = { column: 'ts', direction: 'desc' }; // Estado inicial da ordenação
-    let debounceTimer = null; // Timer para debounce da busca por nome
-
-    // NOVO: Variáveis de paginação
-    let paginationState = {
-      currentPage: 1,
-      itemsPerPage: 100,
-      totalPages: 1,
-      totalItems: 0
-    };
-
-    // Verificar se a URL foi configurada
-    function verificarConfiguracao() {
-      if (URL_SCRIPT.includes("SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI")) {
-        alertConfig.style.display = 'block';
-        return false;
-      }
-      alertConfig.style.display = 'none';
-      return true;
+    // Para ordenação de strings (case insensitive)
+    if (typeof valueA === 'string' && typeof valueB === 'string') {
+      return direction * valueA.localeCompare(valueB, 'pt-BR', { sensitivity: 'base' });
     }
+    
+    // Para números e outros tipos
+    if (valueA < valueB) return -1 * direction;
+    if (valueA > valueB) return 1 * direction;
+    return 0;
+  });
+  
+  return arr;
+}
 
-    // Função para fazer requisições ao Google Apps Script
-    async function fazerRequisicao(params = {}) {
-      return new Promise((resolve, reject) => {
-        if (!verificarConfiguracao()) {
-          return reject(new Error("URL do Google Apps Script não configurada"));
-        }
-        
-        const callbackName = 'jsonpCallback_' + Date.now() + Math.floor(Math.random() * 1000);
-        window[callbackName] = (data) => {
-          document.body.removeChild(script);
-          delete window[callbackName];
-          resolve(data);
-        };
-        
-        const urlParams = new URLSearchParams({ callback: callbackName, ...params });
-        const script = document.createElement('script');
-        script.src = `${URL_SCRIPT}?${urlParams.toString()}`;
+function updateSortIcons() {
+  // Remove todas as classes ativas
+  $$('th[data-sort]').forEach(th => {
+    th.classList.remove('active');
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = '↕️';
+  });
+  
+  // Atualiza o cabeçalho ativo
+  const activeTh = $(`th[data-sort="${sortConfig.field}"]`);
+  if (activeTh) {
+    activeTh.classList.add('active');
+    const icon = activeTh.querySelector('.sort-icon');
+    if (icon) icon.textContent = sortConfig.direction === 'asc' ? '⬆️' : '⬇️';
+  }
+}
 
+/* ============ PAGINAÇÃO ============ */
+function updatePagination() {
+  totalPages = Math.ceil(currentData.length / itemsPerPage);
+  
+  // Ajusta a página atual se necessário
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = totalPages;
+  } else if (totalPages === 0) {
+    currentPage = 1;
+  }
+  
+  // Atualiza controles de paginação
+  currentPageEl.textContent = currentPage;
+  firstPageBtn.disabled = currentPage === 1;
+  prevPageBtn.disabled = currentPage === 1;
+  nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+  lastPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+  
+  // Atualiza informações de paginação
+  const start = totalPages > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+  const end = Math.min(currentPage * itemsPerPage, currentData.length);
+  paginationInfo.textContent = `Mostrando ${start}-${end} de ${currentData.length} registros`;
+  
+  // Mostra/oculta a paginação conforme necessário
+  if (currentData.length > 0) {
+    pagination.classList.remove('hide');
+  } else {
+    pagination.classList.add('hide');
+  }
+  
+  // Renderiza os dados da página atual
+  renderCurrentPage();
+}
 
-        document.body.appendChild(script);
-      });
+function renderCurrentPage() {
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageData = currentData.slice(start, end);
+  
+  tbody.innerHTML = '';
+  const frag = document.createDocumentFragment();
+
+  pageData.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.appendChild(safeCell(fmtDate(r.ts)));
+
+    const tdNome = document.createElement('td');
+    const strong = document.createElement('strong');
+    strong.textContent = r.nome ?? '';
+    tdNome.appendChild(strong);
+    tr.appendChild(tdNome);
+
+    tr.appendChild(safeCell(r.serie));
+    tr.appendChild(safeCell(r.pratica));
+
+    const tdId = document.createElement('td');
+    const code = document.createElement('code');
+    code.textContent = r.id ?? '';
+    tdId.appendChild(code);
+    tr.appendChild(tdId);
+
+    frag.appendChild(tr);
+  });
+
+  tbody.appendChild(frag);
+}
+
+function goToPage(page) {
+  if (page < 1) page = 1;
+  if (page > totalPages) page = totalPages;
+  
+  currentPage = page;
+  updatePagination();
+}
+
+function changePageSize(size) {
+  itemsPerPage = parseInt(size, 10);
+  currentPage = 1; // Reset para a primeira página
+  updatePagination();
+}
+
+/* ============ RENDER ============ */
+function renderStats(s) {
+  totEl.textContent = s.totalInscricoes || 0;
+  lastEl.textContent = new Date().toLocaleTimeString('pt-BR');
+  const cap = s.capacidade || [];
+  
+  // Estatísticas adicionais
+  const activePractices = cap.filter(c => (+c.restantes || 0) > 0).length;
+  activeEl.textContent = activePractices;
+  
+  esgotEl.textContent = cap.filter(c => (+c.restantes || 0) === 0).length;
+  
+  // Calcular ocupação média
+  let totalInscritos = 0;
+  let totalLimite = 0;
+  
+  cap.forEach(c => {
+    totalInscritos += +c.inscritos || 0;
+    totalLimite += +c.limite || 0;
+  });
+  
+  const avgOccupancy = totalLimite > 0 ? Math.round((totalInscritos / totalLimite) * 100) : 0;
+  avgOccupancyEl.textContent = `${avgOccupancy}%`;
+
+  // Atualizar dropdown de práticas
+  fPratica.innerHTML = '';
+  const optAll = document.createElement('option');
+  optAll.value = ''; 
+  optAll.textContent = 'Todos';
+  fPratica.appendChild(optAll);
+
+  cap.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.pratica;
+    o.textContent = `${c.pratica} (${(+c.restantes || 0)} restantes)`;
+    fPratica.appendChild(o);
+  });
+
+  // Atualizar grid de capacidade
+  capGrid.innerHTML = '';
+  cap.forEach(c => {
+    const restantes = +c.restantes || 0;
+    const inscritos = +c.inscritos || 0;
+    const limite = +c.limite || 0;
+    const percentual = limite > 0 ? Math.min((inscritos / limite) * 100, 100) : 0;
+
+    const item = document.createElement('div');
+    item.className = 'capacity-item';
+
+    const nm = document.createElement('div'); 
+    nm.className = 'capacity-name'; 
+    nm.textContent = c.pratica;
+    
+    const nums = document.createElement('div'); 
+    nums.className = 'capacity-numbers';
+
+    const ratio = document.createElement('span'); 
+    ratio.className = 'capacity-ratio'; 
+    ratio.textContent = `${inscritos}/${limite}`;
+    
+    const status = document.createElement('span');
+    status.className = 'capacity-status ' + (restantes > 0 ? 'available' : 'full');
+    status.textContent = restantes > 0 ? `${restantes} vagas` : 'ESGOTADO';
+
+    nums.appendChild(ratio); 
+    nums.appendChild(status);
+
+    const bar = document.createElement('div'); 
+    bar.className = 'progress-bar';
+    
+    const fill = document.createElement('div'); 
+    fill.className = 'progress-fill'; 
+    fill.style.width = `${percentual}%`;
+    
+    bar.appendChild(fill);
+
+    item.appendChild(nm); 
+    item.appendChild(nums); 
+    item.appendChild(bar);
+    capGrid.appendChild(item);
+  });
+}
+
+function safeCell(text) {
+  const td = document.createElement('td');
+  td.textContent = text ?? '';
+  return td;
+}
+
+function renderRows(rows) {
+  baseData = rows || [];
+  currentData = applySort(baseData);
+  
+  // Atualizar contagem
+  count.textContent = `${currentData.length} registro(s) encontrado(s)`;
+  
+  // Atualizar paginação
+  updatePagination();
+}
+
+/* ============ LOAD (Abortable) ============ */
+async function loadStats() {
+  if (statsController) statsController.abort();
+  statsController = new AbortController();
+  return authedGet(API, { stats: '1' }, { signal: statsController.signal });
+}
+
+async function loadList() {
+  if (listController) listController.abort();
+  listController = new AbortController();
+  const params = { list: '1' };
+  const p = fPratica.value || '', s = fSerie.value || '', q = (fQ.value || '').trim();
+  if (p) params.pratica = p;
+  if (s) params.serie = s;
+  if (q) params.q = q;
+  return authedGet(API, params, { signal: listController.signal });
+}
+
+/* ============ ATUALIZAÇÃO AUTOMÁTICA ============ */
+function setupAutoRefresh() {
+  // Limpar timer existente
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+  }
+  
+  // Configurar novo timer (5 minutos)
+  autoRefreshTimer = setInterval(async () => {
+    if (dash.classList.contains('hide')) return;
+    
+    try {
+      const [s, l] = await Promise.all([loadStats(), loadList()]);
+      renderStats(s); 
+      renderRows(l.rows || []);
+      showMessage($('#fltMsg'), 'Dados atualizados automaticamente', 'success');
+    } catch(err) {
+      console.error('Erro na atualização automática:', err);
     }
+  }, 5 * 60 * 1000); // 5 minutos
+}
 
-    // NOVO: Funções de paginação
-    function calcularPaginacao() {
-      paginationState.totalItems = filteredAndSortedData.length;
-      paginationState.itemsPerPage = parseInt(itemsPorPagina.value);
-      paginationState.totalPages = Math.ceil(paginationState.totalItems / paginationState.itemsPerPage);
-      
-      // Ajustar página atual se necessário
-      if (paginationState.currentPage > paginationState.totalPages) {
-        paginationState.currentPage = Math.max(1, paginationState.totalPages);
-      }
-    }
+/* ============ DEBOUNCE ============ */
+function debounce(func, delay) {
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => func.apply(context, args), delay);
+  };
+}
 
-    function obterDadosPaginaAtual() {
-      const startIndex = (paginationState.currentPage - 1) * paginationState.itemsPerPage;
-      const endIndex = startIndex + paginationState.itemsPerPage;
-      return filteredAndSortedData.slice(startIndex, endIndex);
-    }
+/* ============ EXPORTS (respeita currentData) ============ */
+function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text('Práticas Integradoras 1 2025.2 - Inscrições', 14, 20);
+  doc.setFontSize(10);
+  doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
+  
+  // Adicionar informações de filtro
+  let filterInfo = 'Filtros aplicados: ';
+  const filters = [];
+  if (fPratica.value) filters.push(`Aprofundamento: ${fPratica.value}`);
+  if (fSerie.value) filters.push(`Série/Turma: ${fSerie.value}`);
+  if (fQ.value) filters.push(`Nome: ${fQ.value}`);
+  
+  filterInfo += filters.length > 0 ? filters.join(', ') : 'Nenhum';
+  doc.text(filterInfo, 14, 40);
 
-    function atualizarInfoPaginacao() {
-      if (paginationState.totalItems === 0) {
-        paginationContainer.style.display = 'none';
-        return;
-      }
+  const headers = [['Data/Hora','Nome','Série/Turma','Aprofundamento','ID']];
+  const data = currentData.map(row => [ fmtDate(row.ts), row.nome, row.serie, row.pratica, row.id ]);
 
-      paginationContainer.style.display = 'flex';
-      
-      const startItem = (paginationState.currentPage - 1) * paginationState.itemsPerPage + 1;
-      const endItem = Math.min(paginationState.currentPage * paginationState.itemsPerPage, paginationState.totalItems);
-      
-      paginationInfo.textContent = `Mostrando ${startItem} a ${endItem} de ${paginationState.totalItems} registros (Página ${paginationState.currentPage} de ${paginationState.totalPages})`;
-      
-      // Atualizar estado dos botões
-      btnPrimeiraPagina.disabled = paginationState.currentPage === 1;
-      btnPaginaAnterior.disabled = paginationState.currentPage === 1;
-      btnProximaPagina.disabled = paginationState.currentPage === paginationState.totalPages;
-      btnUltimaPagina.disabled = paginationState.currentPage === paginationState.totalPages;
-    }
+  doc.autoTable({
+    head: headers,
+    body: data,
+    startY: 50,
+    styles: { fontSize: 8, cellPadding: 2 },
+    headStyles: { fillColor: [124, 92, 255], textColor: 255 },
+    alternateRowStyles: { fillColor: [245, 245, 245] }
+  });
 
-    function irParaPagina(novaPagina) {
-      if (novaPagina >= 1 && novaPagina <= paginationState.totalPages) {
-        paginationState.currentPage = novaPagina;
-        preencherTabelaInscricoes();
-        atualizarInfoPaginacao();
-      }
-    }
+  const filename = `inscricoes_${new Date().toISOString().split('T')[0]}.pdf`;
+  doc.save(filename);
+}
 
-    // Lógica de filtragem e ordenação (modificada para incluir paginação)
-    function processarDados() {
-      // 1. Filtrar
-      const pratica = filtroPratica.value;
-      const serie = filtroSerie.value;
-      const nome = filtroNome.value.toLowerCase().trim();
+function exportToXLSX() {
+  const data = [
+    ['Data/Hora', 'Nome', 'Série/Turma', 'Aprofundamento', 'ID'],
+    ...currentData.map(row => [ fmtDate(row.ts), row.nome, row.serie, row.pratica, row.id ])
+  ];
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{ width: 20 }, { width: 30 }, { width: 15 }, { width: 40 }, { width: 15 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Inscrições');
+  const filename = `inscricoes_${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, filename);
+}
 
-      let tempData = allInscricoesData.filter(item => {
-        const matchPratica = !pratica || item.pratica === pratica;
-        const matchSerie = !serie || item.serie === serie;
-        const matchNome = !nome || item.nome.toLowerCase().includes(nome);
-        return matchPratica && matchSerie && matchNome;
-      });
+/* "DOC" compatível (HTML), sem DOCX real */
+function exportToDOCX() {
+  if (!currentData.length) {
+    showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
+    return;
+  }
 
-      // 2. Ordenar
-      const { column, direction } = sortState;
-      tempData.sort((a, b) => {
-        let valA = a[column];
-        let valB = b[column];
-        
-        // Tratamento especial para datas
-        if (column === 'ts') {
-          valA = new Date(valA);
-          valB = new Date(valB);
-        }
-        
-        let comparison = 0;
-        if (valA > valB) comparison = 1;
-        else if (valA < valB) comparison = -1;
-        
-        return direction === 'asc' ? comparison : -comparison;
-      });
-
-      filteredAndSortedData = tempData;
-
-      // 3. Calcular paginação
-      calcularPaginacao();
-
-      // 4. Renderizar
-      preencherTabelaInscricoes();
-      atualizarUIOrdenacao();
-      atualizarInfoPaginacao();
-    }
-
-    // Carrega TODAS as inscrições do servidor
-    async function carregarTodasInscricoes() {
-      try {
-        mostrarLoadingTabela(true);
-        const dados = await fazerRequisicao({ list: '1' });
-        
-        if (!dados.ok) {
-          throw new Error(dados.error || 'Erro ao carregar dados');
-        }
-        
-        allInscricoesData = dados.rows || [];
-        
-        // Resetar para primeira página ao carregar novos dados
-        paginationState.currentPage = 1;
-        
-        processarDados();
-        atualizarEstatisticasGerais();
-
-      } catch (error) {
-        console.error("Erro ao carregar inscrições:", error);
-        mostrarErroTabela(error.message);
-      }
-    }
-
-    // Carrega estatísticas e capacidade
-    async function carregarEstatisticas() {
-      try {
-        const dados = await fazerRequisicao({ stats: '1' });
-        
-        if (!dados.ok) {
-          throw new Error(dados.error || 'Erro ao carregar estatísticas');
-        }
-        
-        // Atualizar estatísticas
-        totalInscricoes.textContent = dados.totalInscricoes || 0;
-        totalPraticas.textContent = Object.keys(dados.byPratica || {}).length;
-        
-        // Calcular ocupação média
-        const capacidade = dados.capacidade || [];
-        if (capacidade.length > 0) {
-          const totalVagas = capacidade.reduce((sum, item) => sum + item.limite, 0);
-          const totalInscritos = capacidade.reduce((sum, item) => sum + item.inscritos, 0);
-          const ocupacao = totalVagas > 0 ? Math.round((totalInscritos / totalVagas) * 100) : 0;
-          vagasPreenchidas.textContent = `${ocupacao}%`;
-        }
-        
-        ultimaAtualizacao.textContent = new Date().toLocaleTimeString('pt-BR');
-        
-        // Atualizar capacidade
-        capacidadeData = capacidade;
-        preencherCapacidade();
-        
-        // Atualizar filtro de práticas
-         atualizarFiltroPraticas(dados.capacidade || []);
-
-      } catch (error) {
-        console.error("Erro ao carregar estatísticas:", error);
-      }
-    }
-
-    function preencherTabelaInscricoes() {
-      if (filteredAndSortedData.length === 0) {
-        tabelaInscricoes.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma inscrição encontrada para os filtros aplicados</p></div></td></tr>`;
-        contadorInscricoes.textContent = "";
-        return;
-      }
-
-      // MODIFICADO: Usar dados da página atual
-      const dadosPaginaAtual = obterDadosPaginaAtual();
-      
-      let html = "";
-      dadosPaginaAtual.forEach(item => {
-        html += `
+  let html = `
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Práticas Integradoras 1 2025.2 - Inscrições</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #7c5cff; text-align: center; }
+        .info { text-align: center; margin-bottom: 30px; color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #7c5cff; color: #fff; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+      </style>
+    </head>
+    <body>
+      <h1>Práticas Integradoras 1 2025.2</h1>
+      <div class="info">
+        <p>Relatório de Inscrições</p>
+        <p>Gerado em: ${new Date().toLocaleString('pt-BR')}</p>
+        <p>Total de registros: ${currentData.length}</p>
+        <p>Ordenação: ${sortConfig.field} (${sortConfig.direction})</p>
+      </div>
+      <table>
+        <thead>
           <tr>
-            <td>${formatarData(item.ts)}</td>
-            <td>${item.nome}</td>
-            <td>${item.serie}</td>
-            <td>${item.pratica}</td>
+            <th>Data/Hora</th>
+            <th>Nome</th>
+            <th>Série/Turma</th>
+            <th>Aprofundamento</th>
+            <th>ID</th>
           </tr>
-        `;
-      });
+        </thead>
+        <tbody>
+  `;
 
-      tabelaInscricoes.innerHTML = html;
-      contadorInscricoes.textContent = `(${filteredAndSortedData.length} registros)`;
+  currentData.forEach(r => {
+    html += `
+      <tr>
+        <td>${fmtDate(r.ts)}</td>
+        <td>${r.nome || ''}</td>
+        <td>${r.serie || ''}</td>
+        <td>${r.pratica || ''}</td>
+        <td>${r.id || ''}</td>
+      </tr>`;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </body>
+  </html>`;
+
+  const blob = new Blob([html], { type: 'application/msword' });
+  const filename = `inscricoes_${new Date().toISOString().split('T')[0]}.doc`;
+  saveAs(blob, filename);
+  showMessage($('#fltMsg'), 'DOC gerado com sucesso!', 'success');
+}
+
+function exportToCSV() {
+  if (!currentData.length) {
+    showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
+    return;
+  }
+  const headers = ['Data/Hora','Nome','Série/Turma','Aprofundamento','ID'];
+  const rows = currentData.map(row => [ fmtDate(row.ts), row.nome, row.serie, row.pratica, row.id ]);
+  const csv = [headers, ...rows].map(arr => arr.map(v => {
+    const s = (v ?? '').toString().replace(/"/g, '""');
+    return /[",\n;]/.test(s) ? `"${s}"` : s;
+  }).join(';')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const filename = `inscricoes_${new Date().toISOString().split('T')[0]}.csv`;
+  saveAs(blob, filename);
+  showMessage($('#fltMsg'), 'CSV exportado com sucesso!', 'success');
+}
+
+/* ============ EVENTOS ============ */
+document.addEventListener('DOMContentLoaded', async () => {
+  API = await resolveApi();
+  apiEl.value = API;
+  apiInfo.textContent = 'API detectada: ' + API;
+
+  if (restoreSession()) {
+    API = API || sessionStorage.getItem('pi_api');
+    enterBtn.click();
+  }
+});
+
+toggleApiBtn.addEventListener('click', () => {
+  apiEditor.classList.toggle('hide');
+});
+
+enterBtn.addEventListener('click', async () => {
+  if (!apiEditor.classList.contains('hide')) {
+    API = (apiEl.value || '').trim() || API;
+  }
+  TOKEN = (pwdEl.value || '').trim();
+  if (!API) { 
+    showMessage(loginMsg, 'API não resolvida. Configure manualmente.', 'error'); 
+    return; 
+  }
+  if (!TOKEN) { 
+    showMessage(loginMsg, 'Informe a senha.', 'error'); 
+    return; 
+  }
+
+  enterBtn.disabled = true;
+  enterBtn.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 10px 0 0;"></div>Validando...';
+  showMessage(loginMsg, 'Validando credenciais...', 'warning');
+
+  try {
+    const stats = await loadStats();
+    setSession(API, TOKEN);
+    localStorage.setItem('pi_api', API);
+
+    loginCard.classList.add('hide'); 
+    dash.classList.remove('hide');
+    renderStats(stats);
+
+    loading.classList.remove('hide'); 
+    tblWrap.classList.add('hide');
+    const lst = await loadList();
+    renderRows(lst.rows || []);
+    loading.classList.add('hide'); 
+    tblWrap.classList.remove('hide'); 
+    hideMessage(loginMsg);
+    showMessage(loginMsg, 'Login realizado com sucesso!', 'success');
+    
+    // Configurar atualização automática
+    setupAutoRefresh();
+  } catch(err) {
+    showMessage(loginMsg, 'Falha no acesso: ' + err.message, 'error');
+  } finally {
+    enterBtn.disabled = false;
+    enterBtn.innerHTML = '<span class="icon-wrapper">🚀</span>Entrar';
+  }
+});
+
+btFiltrar.addEventListener('click', async () => {
+  currentPage = 1; // Reset para a primeira página ao aplicar filtros
+  await applyFilters();
+});
+
+btClearFilters.addEventListener('click', () => {
+  fPratica.value = '';
+  fSerie.value = '';
+  fQ.value = '';
+  currentPage = 1;
+  applyFilters();
+});
+
+async function applyFilters() {
+  btFiltrar.disabled = true;
+  btFiltrar.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 10px 0 0;"></div>Atualizando...';
+  showMessage($('#fltMsg'), 'Aplicando filtros...', 'warning');
+
+  try {
+    const [s, l] = await Promise.all([loadStats(), loadList()]);
+    renderStats(s); 
+    renderRows(l.rows || []);
+    showMessage($('#fltMsg'), 'Filtros aplicados com sucesso!', 'success');
+  } catch(err) {
+    showMessage($('#fltMsg'), 'Erro: ' + err.message, 'error');
+  } finally {
+    btFiltrar.disabled = false;
+    btFiltrar.innerHTML = '<span class="icon-wrapper">🔄</span>Aplicar Filtros';
+  }
+}
+
+// Debounce na busca por nome
+fQ.addEventListener('input', debounce(() => {
+  currentPage = 1;
+  applyFilters();
+}, 500));
+
+// Ordenação por colunas
+$$('th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const field = th.getAttribute('data-sort');
+    
+    // Se já está ordenando por este campo, inverte a direção
+    if (sortConfig.field === field) {
+      sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Caso contrário, define o novo campo e direção padrão (asc)
+      sortConfig.field = field;
+      sortConfig.direction = 'asc';
     }
     
-    // Atualiza os ícones nos cabeçalhos da tabela
-    function atualizarUIOrdenacao() {
-      document.querySelectorAll('th.sortable').forEach(th => {
-        th.classList.remove('asc', 'desc');
-        if (th.dataset.sort === sortState.column) {
-          th.classList.add(sortState.direction);
-        }
-      });
-    }
+    // Atualiza ícones e re-renderiza
+    updateSortIcons();
+    renderRows(baseData);
+  });
+});
 
-    // As estatísticas agora usam a base de dados completa
-    function atualizarEstatisticasGerais() {
-      // As estatísticas são atualizadas pela função carregarEstatisticas()
-    }
+// Controles de paginação
+firstPageBtn.addEventListener('click', () => goToPage(1));
+prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
+nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
+lastPageBtn.addEventListener('click', () => goToPage(totalPages));
+pageSizeSelect.addEventListener('change', (e) => changePageSize(e.target.value));
 
-    function preencherCapacidade() {
-      if (capacidadeData.length === 0) {
-        capacidadeContainer.innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Nenhum dado de capacidade disponível</p></div>';
-        return;
-      }
+/* Exportação (respeita currentData) */
+btPDF.addEventListener('click', () => {
+  if (!currentData.length) return showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
+  btPDF.disabled = true; 
+  btPDF.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 10px 0 0;"></div>Gerando...';
+  try { 
+    exportToPDF(); 
+    showMessage($('#fltMsg'), 'PDF gerado com sucesso!', 'success'); 
+  } catch(err){ 
+    showMessage($('#fltMsg'), 'Erro ao gerar PDF: ' + err.message, 'error'); 
+  } finally { 
+    btPDF.disabled = false; 
+    btPDF.innerHTML = '<span class="icon-wrapper">📄</span>PDF'; 
+  }
+});
 
-      let html = "";
-      capacidadeData.forEach(item => {
-        const percentual = item.limite > 0 ? Math.round((item.inscritos / item.limite) * 100) : 0;
-        const corBorda = percentual >= 90 ? '#e74c3c' : percentual >= 70 ? '#f39c12' : '#3498db';
-        
-        html += `
-          <div class="capacity-card" style="border-left-color: ${corBorda};">
-            <h3>${item.pratica}</h3>
-            <div class="capacity-info">
-              <span><strong>Inscritos:</strong> ${item.inscritos}</span>
-              <span><strong>Limite:</strong> ${item.limite}</span>
-            </div>
-            <div class="capacity-info">
-              <span><strong>Restantes:</strong> ${item.restantes}</span>
-              <span><strong>Ocupação:</strong> ${percentual}%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${percentual}%;"></div>
-            </div>
-          </div>
-        `;
-      });
+btXLSX.addEventListener('click', () => {
+  if (!currentData.length) return showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
+  btXLSX.disabled = true; 
+  btXLSX.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 10px 0 0;"></div>Gerando...';
+  try { 
+    exportToXLSX(); 
+    showMessage($('#fltMsg'), 'XLSX gerado com sucesso!', 'success'); 
+  } catch(err){ 
+    showMessage($('#fltMsg'), 'Erro ao gerar XLSX: ' + err.message, 'error'); 
+  } finally { 
+    btXLSX.disabled = false; 
+    btXLSX.innerHTML = '<span class="icon-wrapper">📊</span>XLSX'; 
+  }
+});
 
-      capacidadeContainer.innerHTML = html;
-    }
+btDOCX.addEventListener('click', () => {
+  if (!currentData.length) return showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
+  btDOCX.disabled = true; 
+  btDOCX.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 10px 0 0;"></div>Gerando...';
+  try { 
+    exportToDOCX(); 
+  } catch(err){ 
+    showMessage($('#fltMsg'), 'Erro ao gerar DOC: ' + err.message, 'error'); 
+  } finally { 
+    btDOCX.disabled = false; 
+    btDOCX.innerHTML = '<span class="icon-wrapper">📝</span>DOC'; 
+  }
+});
 
-    function atualizarFiltroPraticas(capacidadeData) {
-      const opcaoAtual = filtroPratica.value;
-      filtroPratica.innerHTML = '<option value="">Todas as práticas</option>';
-      
-      capacidadeData.sort((a, b) => a.pratica.localeCompare(b.pratica)).forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.pratica;
-        option.textContent = item.pratica;
-        filtroPratica.appendChild(option);
-      });
-      
-      // Restaurar seleção anterior se ainda existir
-      if (opcaoAtual && capacidadeData.some(item => item.pratica === opcaoAtual)) {
-        filtroPratica.value = opcaoAtual;
-      }
-    }
+btCSV.addEventListener('click', () => {
+  if (!currentData.length) return showMessage($('#fltMsg'), 'Nenhum dado para exportar', 'warning');
+  btCSV.disabled = true; 
+  btCSV.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 10px 0 0;"></div>Exportando...';
+  try { 
+    exportToCSV(); 
+  } finally { 
+    setTimeout(() => { 
+      btCSV.disabled = false; 
+      btCSV.innerHTML = '<span class="icon-wrapper">📋</span>CSV'; 
+    }, 600); 
+  }
+});
 
-    async function carregarDadosIniciais() {
-      await Promise.all([
-        carregarTodasInscricoes(),
-        carregarEstatisticas()
-      ]);
-    }
-    
-    function mostrarLoadingTabela(mostrar) { 
-      if (mostrar) { 
-        tabelaInscricoes.innerHTML = `<tr><td colspan="4"><div class="loading"><div class="spinner"></div><p>Carregando dados...</p></div></td></tr>`; 
-        paginationContainer.style.display = 'none';
-      } 
-    }
-    
-    function mostrarErroTabela(mensagem) { 
-      tabelaInscricoes.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i><p>Erro: ${mensagem}</p></div></td></tr>`; 
-      paginationContainer.style.display = 'none';
-    }
-    
-    function formatarData(dataString) { 
-      const data = new Date(dataString); 
-      return data.toLocaleString('pt-BR', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }); 
-    }
+/* Teclas */
+pwdEl.addEventListener('keydown', (e) => { 
+  if (e.key === 'Enter') enterBtn.click(); 
+});
 
-    // Funções de exportação (MODIFICADAS para usar todos os dados filtrados, não apenas a página atual)
-    function exportarPDF() {
-      if (filteredAndSortedData.length === 0) { 
-        alert("Não há dados para exportar"); 
-        return; 
-      }
-      
-      // Feedback visual
-      btnExportPDF.disabled = true;
-      btnExportPDF.classList.add('btn-loading');
-      const originalText = btnExportPDF.innerHTML;
-      btnExportPDF.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PDF...';
-      
-      try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.setFontSize(16);
-        doc.text("Relatório de Inscrições - Práticas Integradoras 2025", 14, 15);
-        doc.setFontSize(10);
-        doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 25);
-        doc.text(`Total de registros: ${filteredAndSortedData.length}`, 14, 30);
-        
-        // Adicionar informações sobre filtros aplicados
-        let filtrosInfo = "Filtros aplicados: ";
-        const filtros = [];
-        if (filtroPratica.value) filtros.push(`Prática: ${filtroPratica.value}`);
-        if (filtroSerie.value) filtros.push(`Série: ${filtroSerie.value}`);
-        if (filtroNome.value) filtros.push(`Nome: ${filtroNome.value}`);
-        if (filtros.length > 0) {
-          filtrosInfo += filtros.join(', ');
-        } else {
-          filtrosInfo += "Nenhum";
-        }
-        doc.text(filtrosInfo, 14, 35);
-        
-        // IMPORTANTE: Exporta TODOS os dados filtrados, não apenas a página atual
-        doc.autoTable({
-          startY: 40,
-          head: [['Data/Hora', 'Nome', 'Série', 'Prática Integradora']],
-          body: filteredAndSortedData.map(item => [formatarData(item.ts), item.nome, item.serie, item.pratica]),
-          styles: { fontSize: 8 },
-          headStyles: { fillColor: [52, 152, 219] }
-        });
-        doc.save('inscricoes_praticas_integradoras.pdf');
-      } finally {
-        // Restaurar botão
-        btnExportPDF.disabled = false;
-        btnExportPDF.classList.remove('btn-loading');
-        btnExportPDF.innerHTML = originalText;
-      }
-    }
+fQ.addEventListener('keydown', (e) => { 
+  if (e.key === 'Enter') btFiltrar.click(); 
+});
 
-    function exportarExcel() {
-      if (filteredAndSortedData.length === 0) { 
-        alert("Não há dados para exportar"); 
-        return; 
-      }
-      
-      // Feedback visual
-      btnExportExcel.disabled = true;
-      btnExportExcel.classList.add('btn-loading');
-      const originalText = btnExportExcel.innerHTML;
-      btnExportExcel.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Excel...';
-      
-      try {
-        // IMPORTANTE: Exporta TODOS os dados filtrados, não apenas a página atual
-        const dadosExport = filteredAndSortedData.map(item => ({
-          'Data/Hora': formatarData(item.ts),
-          'Nome': item.nome,
-          'Série/Turma': item.serie,
-          'Prática Integradora': item.pratica
-        }));
-        
-        const worksheet = XLSX.utils.json_to_sheet(dadosExport);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Inscrições");
-        XLSX.writeFile(workbook, "inscricoes_praticas_integradoras.xlsx");
-      } finally {
-        // Restaurar botão
-        btnExportExcel.disabled = false;
-        btnExportExcel.classList.remove('btn-loading');
-        btnExportExcel.innerHTML = originalText;
-      }
-    }
+/* Logout */
+btLogout?.addEventListener('click', () => {
+  // Limpar timer de atualização automática
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+  
+  sessionStorage.removeItem('pi_api'); 
+  sessionStorage.removeItem('pi_token');
+  TOKEN = ''; 
+  dash.classList.add('hide'); 
+  loginCard.classList.remove('hide');
+  showMessage(loginMsg, 'Sessão encerrada.', 'success');
+  // mantém localStorage.pi_api para reuso futuro
+});
 
-    // Debounce para busca por nome
-    function debounceProcessarDados() {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        // Resetar para primeira página ao aplicar novos filtros
-        paginationState.currentPage = 1;
-        processarDados();
-      }, 300);
-    }
-
-    // Event Listeners
-    
-    // Filtros instantâneos
-    filtroPratica.addEventListener("change", () => {
-      paginationState.currentPage = 1;
-      processarDados();
-    });
-    
-    filtroSerie.addEventListener("change", () => {
-      paginationState.currentPage = 1;
-      processarDados();
-    });
-    
-    filtroNome.addEventListener("input", debounceProcessarDados);
-
-    // Ordenação da tabela
-    document.querySelectorAll('th.sortable').forEach(th => {
-      th.addEventListener('click', () => {
-        const column = th.dataset.sort;
-        
-        if (sortState.column === column) {
-          sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-          sortState.column = column;
-          sortState.direction = 'asc';
-        }
-        
-        // Manter página atual ao ordenar
-        processarDados();
-      });
-    });
-
-    // NOVO: Event listeners para paginação
-    itemsPorPagina.addEventListener("change", () => {
-      paginationState.currentPage = 1;
-      processarDados();
-    });
-
-    btnPrimeiraPagina.addEventListener("click", () => irParaPagina(1));
-    btnPaginaAnterior.addEventListener("click", () => irParaPagina(paginationState.currentPage - 1));
-    btnProximaPagina.addEventListener("click", () => irParaPagina(paginationState.currentPage + 1));
-    btnUltimaPagina.addEventListener("click", () => irParaPagina(paginationState.totalPages));
-
-    // Botões
-    btnLimpar.addEventListener("click", () => {
-      filtroPratica.value = "";
-      filtroSerie.value = "";
-      filtroNome.value = "";
-      paginationState.currentPage = 1;
-      processarDados();
-    });
-
-    btnAtualizar.addEventListener("click", () => {
-      // Feedback visual
-      btnAtualizar.disabled = true;
-      btnAtualizar.classList.add('btn-loading');
-      const originalText = btnAtualizar.innerHTML;
-      btnAtualizar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
-      
-      carregarDadosIniciais().finally(() => {
-        btnAtualizar.disabled = false;
-        btnAtualizar.classList.remove('btn-loading');
-        btnAtualizar.innerHTML = originalText;
-      });
-    });
-
-    btnExportPDF.addEventListener("click", exportarPDF);
-    btnExportExcel.addEventListener("click", exportarExcel);
-
-    // Inicialização
-    document.addEventListener("DOMContentLoaded", () => {
-      verificarConfiguracao();
-      carregarDadosIniciais();
-    });
-
-    // Auto-refresh a cada 5 minutos
-    setInterval(carregarDadosIniciais, 5 * 60 * 1000);
-  </script>
+// Inicializar ícones de ordenação
+updateSortIcons();
+</script>
 </body>
 </html>
-
